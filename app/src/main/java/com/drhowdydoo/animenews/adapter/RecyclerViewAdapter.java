@@ -58,7 +58,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     .transform(new RoundedCorners(30))
                     .placeholder(R.drawable.image_placeholder)
                     .into(holder.thumbnail);
-        }
+        }else { Glide.with(context).clear(holder.thumbnail); }
     }
 
     @Override
@@ -66,10 +66,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return feeds.size();
     }
 
-    public void updateItem(String imageUrl, int position) {
-        feeds.get(position).setImageUrl(imageUrl);
-        notifyItemChanged(position);
-    }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 

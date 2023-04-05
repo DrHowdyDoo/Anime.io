@@ -38,6 +38,7 @@ processor = { group = "com.tickaroo.tikxml", name = "processor", version = "0.8.
 adapter-rxjava3 = { group = "com.squareup.retrofit2", name = "adapter-rxjava3", version = "2.9.0" }
 rxandroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version = "3.0.2" }
 rxjava = { group = "io.reactivex.rxjava3", name = "rxjava", version = "3.1.6" }
+rxbinding-swiperefreshlayout = { group = "com.jakewharton.rxbinding4", name = "rxbinding-swiperefreshlayout", version = "4.0.0" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }

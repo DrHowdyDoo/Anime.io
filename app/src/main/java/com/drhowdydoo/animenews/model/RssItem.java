@@ -1,5 +1,6 @@
 package com.drhowdydoo.animenews.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -7,12 +8,12 @@ import androidx.room.PrimaryKey;
 import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
 
+import java.util.Objects;
+
 @Xml
 @Entity
 public class RssItem {
 
-    @PrimaryKey(autoGenerate = true)
-    private long id;
     @PropertyElement(name = "title")
     @ColumnInfo(name = "title")
     private String title;
@@ -20,6 +21,8 @@ public class RssItem {
     @ColumnInfo(name = "link")
     private String link;
     @PropertyElement(name = "guid")
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "guid")
     private String guid;
     @PropertyElement(name = "description")
@@ -38,13 +41,6 @@ public class RssItem {
     public RssItem() {
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
@@ -100,5 +96,32 @@ public class RssItem {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+
+    @Override
+    public String toString() {
+        return "RssItem{" +
+                "title='" + title + '\'' +
+                ", link='" + link + '\'' +
+                ", guid='" + guid + '\'' +
+                ", description='" + description + '\'' +
+                ", pubDate='" + pubDate + '\'' +
+                ", category='" + category + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RssItem rssItem = (RssItem) o;
+        return Objects.equals(title, rssItem.title) && Objects.equals(link, rssItem.link) && guid.equals(rssItem.guid) && Objects.equals(description, rssItem.description) && Objects.equals(pubDate, rssItem.pubDate) && Objects.equals(category, rssItem.category) && Objects.equals(imageUrl, rssItem.imageUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, link, guid, description, pubDate, category, imageUrl);
     }
 }

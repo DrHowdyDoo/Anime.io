@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.drhowdydoo.animenews.api.RssApi;
+import com.drhowdydoo.animenews.dao.FeedDao;
 import com.drhowdydoo.animenews.model.RssFeed;
 import com.drhowdydoo.animenews.model.RssItem;
 import com.tickaroo.tikxml.TikXml;
@@ -13,6 +14,7 @@ import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -21,9 +23,11 @@ import retrofit2.Retrofit;
 public class RssParser {
 
     private final MainActivity activity;
+    private final FeedDao feedDao;
 
-    public RssParser(MainActivity activity) {
+    public RssParser(MainActivity activity, FeedDao feedDao) {
         this.activity = activity;
+        this.feedDao = feedDao;
     }
 
     private static final String TAG = "RssParser";
@@ -57,9 +61,14 @@ public class RssParser {
                 RssFeed feed = response.body();
                 List<RssItem> items = feed.getChannel().getRssItems();
 
-                activity.updateData(items);
+                Log.d(TAG, "onResponse: items : " + items.toString());
+
+                feedDao.insertAll(items)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
+
                 ImageLoader imageLoader = new ImageLoader();
-                imageLoader.fetchImages(BASE_URL_THUMBNAIL,items,activity.getAdapter());
+                imageLoader.fetchImages(BASE_URL_THUMBNAIL,items,feedDao);
 
             }
 

@@ -1,9 +1,10 @@
 package com.drhowdydoo.animenews;
 
+import android.util.Log;
 import android.util.Pair;
 
-import com.drhowdydoo.animenews.adapter.RecyclerViewAdapter;
 import com.drhowdydoo.animenews.api.OGApi;
+import com.drhowdydoo.animenews.dao.FeedDao;
 import com.drhowdydoo.animenews.model.RssItem;
 
 import org.jsoup.Jsoup;
@@ -12,7 +13,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -24,10 +24,12 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class ImageLoader {
 
+    private static final String TAG = "ImageLoader";
+
     public ImageLoader() {
     }
 
-    public void fetchImages(String baseUrl, List<RssItem> items, RecyclerViewAdapter adapter){
+    public void fetchImages(String baseUrl, List<RssItem> items, FeedDao feedDao){
 
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -41,24 +43,26 @@ public class ImageLoader {
                 .flatMap(item -> api.getPage(item.getGuid())
                         .subscribeOn(Schedulers.io())
                         .map(response -> {
-                            int position = IntStream.range(0, items.size())
-                                    .filter(i -> items.get(i).getGuid().equalsIgnoreCase(item.getGuid()))
-                                    .findFirst()
-                                    .orElse(-1);
                             Document doc = Jsoup.parse(response);
                             Elements metaTags = doc.select("meta[property^=og:]");
                             for (Element metaTag : metaTags) {
                                 String property = metaTag.attr("property");
                                 if (property.equals("og:image")) {
-                                    return new Pair<>(position, metaTag.attr("content"));
+                                    return new Pair<>(item.getGuid(), metaTag.attr("content"));
                                 }
                             }
-                            return new Pair<>(position, " ");
+                            return new Pair<>(item.getGuid(), " ");
                         })
                         .observeOn(AndroidSchedulers.mainThread()))
                 .subscribe(response -> {
                     // Handle response
-                    adapter.updateItem(response.second, response.first);
+                    Log.d(TAG, "fetchImages: guid : " + response.first + " url : " + response.second);
+                    if (response.second != null) {
+                        feedDao.updateFeedImage(response.second,response.first)
+                                .subscribeOn(Schedulers.io())
+                                .subscribe();
+                    }
+
                 }, Throwable::printStackTrace);
 
     }

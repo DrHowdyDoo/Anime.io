@@ -9,6 +9,9 @@ import com.drhowdydoo.animenews.model.RssItem;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+
 @Dao
 public interface FeedDao {
 
@@ -16,8 +19,12 @@ public interface FeedDao {
     List<RssItem> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<RssItem> feeds);
+    Completable insertAll(List<RssItem> feeds);
 
+    @Query("SELECT * FROM RssItem")
+    Observable<List<RssItem>> getAllFeeds();
 
+    @Query("UPDATE RssItem SET image_url = :imageUrl WHERE guid = :guid")
+    Completable updateFeedImage(String imageUrl,String guid);
 
 }
