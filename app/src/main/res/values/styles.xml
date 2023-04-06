@@ -8,6 +8,7 @@
     </style>
 
     <style name="TitleTextAppearance" parent="TextAppearance.Material3.TitleLarge">
+        <item name="lineHeight">24sp</item>
         <item name="android:textSize">20sp</item>
         <item name="fontFamily">@font/rubik_medium</item>
         <item name="android:fontFamily">@font/rubik_medium</item>
@@ -16,6 +17,11 @@
     <style name="BodyTextAppearance" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:fontFamily">@font/rubik</item>
         <item name="fontFamily">@font/rubik</item>
+    </style>
+
+    <style name="LabelTextAppearance" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/rubik_medium</item>
+        <item name="fontFamily">@font/rubik_medium</item>
     </style>
 
 </resources>

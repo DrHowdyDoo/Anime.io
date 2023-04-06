@@ -1,7 +1,5 @@
 package com.drhowdydoo.animenews.adapter;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.drhowdydoo.animenews.R;
 import com.drhowdydoo.animenews.databinding.CardLayoutBinding;
@@ -53,10 +53,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         if (rssItem.getImageUrl() != null) {
             Glide.with(context)
                     .load(rssItem.getImageUrl())
-                    .transition(withCrossFade())
                     .fitCenter()
-                    .transform(new RoundedCorners(30))
+                    .transform(new RoundedCorners(50))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .priority(Priority.HIGH)
                     .placeholder(R.drawable.image_placeholder)
+                    .error(R.drawable.round_broken_image_24)
                     .into(holder.thumbnail);
         }else { Glide.with(context).clear(holder.thumbnail); }
     }

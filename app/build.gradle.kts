@@ -57,7 +57,6 @@ dependencies {
     implementation(libs.adapter.rxjava3)
     implementation(libs.rxandroid)
     implementation(libs.rxjava)
-    annotationProcessor(libs.compiler)
     implementation(libs.androidx.recyclerview)
     implementation(libs.retrofit)
     implementation(libs.androidx.swiperefreshlayout)

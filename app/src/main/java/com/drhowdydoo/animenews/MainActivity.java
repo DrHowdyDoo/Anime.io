@@ -73,11 +73,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        rssParser.getRssFeed(BASE_URL);
+        //rssParser.getRssFeed(BASE_URL);
 
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            rssParser.getRssFeed(BASE_URL);
+             rssParser.getRssFeed(BASE_URL);
+
         });
 
     }

@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.drhowdydoo.animenews.converter.DateConverter;
 import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
 
@@ -28,7 +29,7 @@ public class RssItem {
     @PropertyElement(name = "description")
     @ColumnInfo(name = "description")
     private String description;
-    @PropertyElement(name = "pubDate")
+    @PropertyElement(name = "pubDate",converter = DateConverter.class)
     @ColumnInfo(name = "pub_date")
     private String pubDate;
     @PropertyElement(name = "category")
