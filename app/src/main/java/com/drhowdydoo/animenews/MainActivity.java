@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setAdapter(adapter);
 
-        FeedDatabase db = Room.databaseBuilder(getApplicationContext(),FeedDatabase.class,"drhowdydoo-feedDb").build();
+        FeedDatabase db = Room.databaseBuilder(getApplicationContext(), FeedDatabase.class, "drhowdydoo-feedDb").build();
         feedDao = db.feedDao();
 
         RssParser rssParser = new RssParser(this, feedDao);
@@ -79,30 +79,30 @@ public class MainActivity extends AppCompatActivity {
 
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
-             rssParser.getRssFeed(BASE_URL);
+            rssParser.getRssFeed(BASE_URL);
 
         });
 
     }
 
 
-    public void updateData(List<RssItem> updatedFeeds){
+    public void updateData(List<RssItem> updatedFeeds) {
         swipeRefreshLayout.setRefreshing(false);
         feeds.clear();
         feeds.addAll(updatedFeeds);
         adapter.notifyDataSetChanged();
     }
 
-    public RecyclerViewAdapter getAdapter(){
+    public RecyclerViewAdapter getAdapter() {
         return adapter;
     }
 
-    public void stopRefreshing(){
+    public void stopRefreshing() {
         swipeRefreshLayout.setRefreshing(false);
     }
 
-    public void showError(String msg){
-        Snackbar.make(binding.getRoot(),msg, BaseTransientBottomBar.LENGTH_SHORT)
+    public void showError(String msg) {
+        Snackbar.make(binding.getRoot(), msg, BaseTransientBottomBar.LENGTH_SHORT)
                 .show();
     }
 

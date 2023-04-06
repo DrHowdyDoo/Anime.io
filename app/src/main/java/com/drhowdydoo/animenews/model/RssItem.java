@@ -9,6 +9,7 @@ import com.drhowdydoo.animenews.converter.DateConverter;
 import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
 
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Xml
@@ -29,9 +30,9 @@ public class RssItem {
     @PropertyElement(name = "description")
     @ColumnInfo(name = "description")
     private String description;
-    @PropertyElement(name = "pubDate",converter = DateConverter.class)
+    @PropertyElement(name = "pubDate", converter = DateConverter.class)
     @ColumnInfo(name = "pub_date")
-    private String pubDate;
+    private ZonedDateTime pubDate;
     @PropertyElement(name = "category")
     @ColumnInfo(name = "category")
     private String category;
@@ -75,11 +76,11 @@ public class RssItem {
         this.description = description;
     }
 
-    public String getPubDate() {
+    public ZonedDateTime getPubDate() {
         return pubDate;
     }
 
-    public void setPubDate(String pubDate) {
+    public void setPubDate(ZonedDateTime pubDate) {
         this.pubDate = pubDate;
     }
 

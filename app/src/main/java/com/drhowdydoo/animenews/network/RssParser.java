@@ -24,18 +24,16 @@ import retrofit2.Retrofit;
 
 public class RssParser {
 
+    private static final String TAG = "RssParser";
+    private static final String BASE_URL_THUMBNAIL = "https://www.animenewsnetwork.com/cms/";
     private final MainActivity activity;
     private final FeedDao feedDao;
-
     public RssParser(MainActivity activity, FeedDao feedDao) {
         this.activity = activity;
         this.feedDao = feedDao;
     }
 
-    private static final String TAG = "RssParser";
-    private static final String BASE_URL_THUMBNAIL = "https://www.animenewsnetwork.com/cms/";
-
-    public void getRssFeed(String baseUrl){
+    public void getRssFeed(String baseUrl) {
 
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -68,14 +66,14 @@ public class RssParser {
                         .subscribeOn(Schedulers.io())
                         .subscribe(() -> {
                             Log.d(TAG, "Write operation Successful");
-                        },error -> {
+                        }, error -> {
                             Log.e(TAG, "Error occurred while writing to database !", error);
                             activity.stopRefreshing();
                         });
 
 
                 ImageLoader imageLoader = new ImageLoader(activity);
-                imageLoader.fetchImages(BASE_URL_THUMBNAIL,items,feedDao);
+                imageLoader.fetchImages(BASE_URL_THUMBNAIL, items, feedDao);
 
             }
 

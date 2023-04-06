@@ -34,7 +34,7 @@ public class ImageLoader {
         this.activity = activity;
     }
 
-    public void fetchImages(String baseUrl, List<RssItem> items, FeedDao feedDao){
+    public void fetchImages(String baseUrl, List<RssItem> items, FeedDao feedDao) {
 
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -62,7 +62,7 @@ public class ImageLoader {
                 .subscribe(response -> {
                     Log.d(TAG, "fetchImages: guid : " + response.first + " url : " + response.second);
                     if (response.second != null) {
-                        feedDao.updateFeedImage(response.second,response.first)
+                        feedDao.updateFeedImage(response.second, response.first)
                                 .subscribeOn(Schedulers.io())
                                 .subscribe();
                     }
@@ -76,7 +76,9 @@ public class ImageLoader {
                             if (httpCode == 429) {
                                 activity.showError("Too many Requests !");
                             }
-                        } catch (Exception e) { e.printStackTrace();}
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                     activity.showError("Error fetching thumbnails !");
                 });

@@ -20,6 +20,7 @@ import com.drhowdydoo.animenews.model.RssItem;
 
 import org.jsoup.Jsoup;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ItemViewHolder> {
@@ -27,6 +28,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private final List<RssItem> feeds;
     private final Context context;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy h:mm a");
 
     public RecyclerViewAdapter(List<RssItem> feeds, Context context) {
         this.feeds = feeds;
@@ -49,7 +52,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         if (rssItem.getCategory() != null) {
             holder.category.setText(rssItem.getCategory());
         } else holder.category.setVisibility(View.GONE);
-        holder.time.setText(rssItem.getPubDate());
+        holder.time.setText(rssItem.getPubDate().format(formatter));
         if (rssItem.getImageUrl() != null) {
             Glide.with(context)
                     .load(rssItem.getImageUrl())
@@ -60,7 +63,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     .placeholder(R.drawable.image_placeholder)
                     .error(R.drawable.round_broken_image_24)
                     .into(holder.thumbnail);
-        }else { Glide.with(context).clear(holder.thumbnail); }
+        } else {
+            Glide.with(context).clear(holder.thumbnail);
+        }
     }
 
     @Override
