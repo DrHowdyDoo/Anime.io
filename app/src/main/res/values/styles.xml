@@ -24,4 +24,12 @@
         <item name="fontFamily">@font/rubik_medium</item>
     </style>
 
+    <style name="Widget.App.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="shapeAppearance">@style/RoundedSnackBar</item>
+    </style>
+
+    <style name="RoundedSnackBar" parent="ShapeAppearance.Material3.Corner.ExtraSmall">
+        <item name="cornerSize">24dp</item>
+    </style>
+
 </resources>

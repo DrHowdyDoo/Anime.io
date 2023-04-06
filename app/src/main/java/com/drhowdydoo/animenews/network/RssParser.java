@@ -1,9 +1,11 @@
-package com.drhowdydoo.animenews;
+package com.drhowdydoo.animenews.network;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.drhowdydoo.animenews.MainActivity;
 import com.drhowdydoo.animenews.api.RssApi;
 import com.drhowdydoo.animenews.dao.FeedDao;
 import com.drhowdydoo.animenews.model.RssFeed;
@@ -49,6 +51,7 @@ public class RssParser {
         Call<RssFeed> call = rssApi.getFeed();
 
         call.enqueue(new Callback<RssFeed>() {
+            @SuppressLint("CheckResult")
             @Override
             public void onResponse(@NonNull Call<RssFeed> call, @NonNull Response<RssFeed> response) {
                 if (!response.isSuccessful()) {
@@ -61,13 +64,17 @@ public class RssParser {
                 RssFeed feed = response.body();
                 List<RssItem> items = feed.getChannel().getRssItems();
 
-                Log.d(TAG, "onResponse: items : " + items.toString());
-
                 feedDao.insertAll(items)
                         .subscribeOn(Schedulers.io())
-                        .subscribe();
+                        .subscribe(() -> {
+                            Log.d(TAG, "Write operation Successful");
+                        },error -> {
+                            Log.e(TAG, "Error occurred while writing to database !", error);
+                            activity.stopRefreshing();
+                        });
 
-                ImageLoader imageLoader = new ImageLoader();
+
+                ImageLoader imageLoader = new ImageLoader(activity);
                 imageLoader.fetchImages(BASE_URL_THUMBNAIL,items,feedDao);
 
             }
@@ -75,6 +82,8 @@ public class RssParser {
             @Override
             public void onFailure(@NonNull Call<RssFeed> call, @NonNull Throwable t) {
                 Log.e(TAG, "Error fetching RSS feed", t);
+                activity.stopRefreshing();
+                activity.showError("Error fetching RSS feeds !");
             }
         });
 

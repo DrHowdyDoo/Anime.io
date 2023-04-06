@@ -34,7 +34,7 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
 
-        <!-- Font -->
+        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
 
     </style>
 

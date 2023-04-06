@@ -2,7 +2,6 @@ package com.drhowdydoo.animenews;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,8 +14,11 @@ import com.drhowdydoo.animenews.dao.FeedDao;
 import com.drhowdydoo.animenews.database.FeedDatabase;
 import com.drhowdydoo.animenews.databinding.ActivityMainBinding;
 import com.drhowdydoo.animenews.model.RssItem;
+import com.drhowdydoo.animenews.network.RssParser;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.MaterialColors;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void updateData(List<RssItem> updatedFeeds){
-        Log.d(TAG, "updateData: " + updatedFeeds.toString());
         swipeRefreshLayout.setRefreshing(false);
         feeds.clear();
         feeds.addAll(updatedFeeds);
@@ -94,6 +95,15 @@ public class MainActivity extends AppCompatActivity {
 
     public RecyclerViewAdapter getAdapter(){
         return adapter;
+    }
+
+    public void stopRefreshing(){
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void showError(String msg){
+        Snackbar.make(binding.getRoot(),msg, BaseTransientBottomBar.LENGTH_SHORT)
+                .show();
     }
 
 }

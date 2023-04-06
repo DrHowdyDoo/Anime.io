@@ -1,8 +1,9 @@
-package com.drhowdydoo.animenews;
+package com.drhowdydoo.animenews.network;
 
 import android.util.Log;
 import android.util.Pair;
 
+import com.drhowdydoo.animenews.MainActivity;
 import com.drhowdydoo.animenews.api.OGApi;
 import com.drhowdydoo.animenews.dao.FeedDao;
 import com.drhowdydoo.animenews.model.RssItem;
@@ -18,6 +19,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -26,7 +28,10 @@ public class ImageLoader {
 
     private static final String TAG = "ImageLoader";
 
-    public ImageLoader() {
+    private final MainActivity activity;
+
+    public ImageLoader(MainActivity activity) {
+        this.activity = activity;
     }
 
     public void fetchImages(String baseUrl, List<RssItem> items, FeedDao feedDao){
@@ -55,7 +60,6 @@ public class ImageLoader {
                         })
                         .observeOn(AndroidSchedulers.mainThread()))
                 .subscribe(response -> {
-                    // Handle response
                     Log.d(TAG, "fetchImages: guid : " + response.first + " url : " + response.second);
                     if (response.second != null) {
                         feedDao.updateFeedImage(response.second,response.first)
@@ -63,7 +67,19 @@ public class ImageLoader {
                                 .subscribe();
                     }
 
-                }, Throwable::printStackTrace);
+                }, error -> {
+                    Log.e(TAG, "Error fetching images !", error);
+                    if (error instanceof HttpException) {
+                        HttpException httpException = (HttpException) error;
+                        try {
+                            int httpCode = httpException.code();
+                            if (httpCode == 429) {
+                                activity.showError("Too many Requests !");
+                            }
+                        } catch (Exception e) { e.printStackTrace();}
+                    }
+                    activity.showError("Error fetching thumbnails !");
+                });
 
     }
 
