@@ -6,7 +6,6 @@ import android.util.Pair;
 import com.drhowdydoo.animenews.MainActivity;
 import com.drhowdydoo.animenews.api.OGApi;
 import com.drhowdydoo.animenews.dao.FeedDao;
-import com.drhowdydoo.animenews.model.RssItem;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,7 +33,7 @@ public class ImageLoader {
         this.activity = activity;
     }
 
-    public void fetchImages(String baseUrl, List<RssItem> items, FeedDao feedDao) {
+    public void fetchImages(String baseUrl, List<String> imageUrls, FeedDao feedDao) {
 
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -44,8 +43,8 @@ public class ImageLoader {
                 .build();
 
         OGApi api = retrofit.create(OGApi.class);
-        Disposable disposable = Observable.fromIterable(items)
-                .flatMap(item -> api.getPage(item.getGuid())
+        Disposable disposable = Observable.fromIterable(imageUrls)
+                .flatMap(url -> api.getPage(url)
                         .subscribeOn(Schedulers.io())
                         .map(response -> {
                             Document doc = Jsoup.parse(response);
@@ -53,10 +52,10 @@ public class ImageLoader {
                             for (Element metaTag : metaTags) {
                                 String property = metaTag.attr("property");
                                 if (property.equals("og:image")) {
-                                    return new Pair<>(item.getGuid(), metaTag.attr("content"));
+                                    return new Pair<>(url, metaTag.attr("content"));
                                 }
                             }
-                            return new Pair<>(item.getGuid(), " ");
+                            return new Pair<>(url, " ");
                         })
                         .observeOn(AndroidSchedulers.mainThread()))
                 .subscribe(response -> {
@@ -69,7 +68,7 @@ public class ImageLoader {
 
                 }, error -> {
                     Log.e(TAG, "Error fetching images !", error);
-                    if (error instanceof HttpException) {
+                    if (error instanceof retrofit2.adapter.rxjava3.HttpException) {
                         HttpException httpException = (HttpException) error;
                         try {
                             int httpCode = httpException.code();

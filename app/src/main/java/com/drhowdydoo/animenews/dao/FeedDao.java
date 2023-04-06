@@ -15,13 +15,13 @@ import io.reactivex.rxjava3.core.Observable;
 @Dao
 public interface FeedDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     Completable insertAll(List<RssItem> feeds);
 
     @Query("SELECT * FROM RssItem ORDER BY datetime(pub_date) DESC")
     Observable<List<RssItem>> getAllFeeds();
 
-    @Query("UPDATE RssItem SET image_url = :imageUrl WHERE guid = :guid")
+    @Query("UPDATE RssItem SET image_url = :imageUrl WHERE guid = :guid AND image_url IS NULL")
     Completable updateFeedImage(String imageUrl, String guid);
 
 }
