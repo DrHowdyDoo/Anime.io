@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -29,12 +30,16 @@ public class ImageLoader {
 
     private final MainActivity activity;
 
+    private static List<String> oldList = new ArrayList<>();
+
     public ImageLoader(MainActivity activity) {
         this.activity = activity;
     }
 
     public void fetchImages(String baseUrl, List<String> imageUrls, FeedDao feedDao) {
 
+        imageUrls.removeAll(oldList);
+        oldList = imageUrls;
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)

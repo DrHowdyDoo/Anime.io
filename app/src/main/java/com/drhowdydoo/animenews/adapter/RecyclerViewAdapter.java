@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.drhowdydoo.animenews.R;
@@ -57,8 +58,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             Glide.with(context)
                     .load(rssItem.getImageUrl())
                     .fitCenter()
+                    .format(DecodeFormat.PREFER_RGB_565)
                     .transform(new RoundedCorners(50))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .priority(Priority.HIGH)
                     .placeholder(R.drawable.image_placeholder)
                     .error(R.drawable.round_broken_image_24)

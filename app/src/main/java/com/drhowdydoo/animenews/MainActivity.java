@@ -15,7 +15,6 @@ import com.drhowdydoo.animenews.dao.FeedDao;
 import com.drhowdydoo.animenews.database.FeedDatabase;
 import com.drhowdydoo.animenews.databinding.ActivityMainBinding;
 import com.drhowdydoo.animenews.model.RssItem;
-import com.drhowdydoo.animenews.network.ImageLoader;
 import com.drhowdydoo.animenews.network.RssParser;
 import com.drhowdydoo.animenews.util.MyDiffUtilCallback;
 import com.google.android.material.color.DynamicColors;
@@ -25,7 +24,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -34,7 +32,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "https://animenewsnetwork.com/newsfeed/";
-    private static final String BASE_URL_THUMBNAIL = "https://www.animenewsnetwork.com/cms/";
     private static final String TAG = "MainActivity";
     private static FeedDao feedDao;
     private ActivityMainBinding binding;
@@ -77,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(response -> {
                     if (!response.isEmpty()) {
                         updateData(response);
+                    } else {
+                        showError("No Updates Available....");
                     }
                 });
 
@@ -98,11 +97,6 @@ public class MainActivity extends AppCompatActivity {
         feeds.clear();
         feeds.addAll(updatedFeeds);
         diffResult.dispatchUpdatesTo(adapter);
-        ImageLoader imageLoader = new ImageLoader(this);
-        List<String> imagesUrl = updatedFeeds.stream().filter(item -> item.getImageUrl() == null).map(RssItem::getGuid).collect(Collectors.toList());
-        if(!imagesUrl.isEmpty()) {
-            imageLoader.fetchImages(BASE_URL_THUMBNAIL, imagesUrl, feedDao);
-        }
     }
 
     public RecyclerViewAdapter getAdapter() {

@@ -15,6 +15,7 @@ import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter;
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
@@ -25,6 +26,8 @@ import retrofit2.Retrofit;
 public class RssParser {
 
     private static final String TAG = "RssParser";
+    private static final String BASE_URL_THUMBNAIL = "https://www.animenewsnetwork.com/cms/";
+
     private final MainActivity activity;
     private final FeedDao feedDao;
     public RssParser(MainActivity activity, FeedDao feedDao) {
@@ -65,12 +68,17 @@ public class RssParser {
                         .subscribeOn(Schedulers.io())
                         .subscribe(() -> {
                             Log.d(TAG, "Write operation Successful");
-                            activity.showError("No updates available....");
                             activity.stopRefreshing();
                         }, error -> {
                             Log.e(TAG, "Error occurred while writing to database !", error);
                             activity.stopRefreshing();
                         });
+
+                ImageLoader imageLoader = new ImageLoader(activity);
+                List<String> imagesUrl = items.stream().map(RssItem::getGuid).collect(Collectors.toList());
+                if(!imagesUrl.isEmpty()) {
+                    imageLoader.fetchImages(BASE_URL_THUMBNAIL, imagesUrl, feedDao);
+                }
 
 
             }
