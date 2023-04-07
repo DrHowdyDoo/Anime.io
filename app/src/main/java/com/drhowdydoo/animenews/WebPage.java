@@ -1,6 +1,10 @@
 package com.drhowdydoo.animenews;
 
+import static androidx.webkit.WebSettingsCompat.setAlgorithmicDarkeningAllowed;
+
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,11 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.transition.Fade;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
+import androidx.webkit.WebViewFeature;
 
 import com.drhowdydoo.animenews.databinding.ActivityWebPageBinding;
 
 public class WebPage extends AppCompatActivity {
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +43,14 @@ public class WebPage extends AppCompatActivity {
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            webView.getSettings().setAlgorithmicDarkeningAllowed(true);
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+                setAlgorithmicDarkeningAllowed(webView.getSettings(),true);
+            }
+        }
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
