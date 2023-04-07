@@ -1,6 +1,7 @@
 package com.drhowdydoo.animenews.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.drhowdydoo.animenews.R;
+import com.drhowdydoo.animenews.WebPage;
 import com.drhowdydoo.animenews.databinding.CardLayoutBinding;
 import com.drhowdydoo.animenews.model.RssItem;
 
@@ -68,6 +70,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         } else {
             Glide.with(context).clear(holder.thumbnail);
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), WebPage.class);
+            intent.putExtra("com.drhowdydoo.url", rssItem.getGuid());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

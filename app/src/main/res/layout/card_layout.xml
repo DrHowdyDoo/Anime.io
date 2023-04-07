@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:foreground="?selectableItemBackgroundBorderless"
     android:layout_margin="20dp">
 
 
