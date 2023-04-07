@@ -39,7 +39,10 @@ public class ImageLoader {
     public void fetchImages(String baseUrl, List<String> imageUrls, FeedDao feedDao) {
 
         imageUrls.removeAll(oldList);
-        oldList = imageUrls;
+        if (!imageUrls.isEmpty()) {
+            oldList.addAll(imageUrls);
+        }
+
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -84,7 +87,7 @@ public class ImageLoader {
                             e.printStackTrace();
                         }
                     }
-                    activity.showError("Error fetching thumbnails !");
+                    activity.showError("Something went wrong !");
                 });
 
     }

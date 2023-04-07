@@ -1,5 +1,6 @@
 package com.drhowdydoo.animenews;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setAdapter(adapter);
 
+        SharedPreferences preferences = getSharedPreferences("com.drhowdydoo.preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
         FeedDatabase db = Room.databaseBuilder(getApplicationContext(), FeedDatabase.class, "drhowdydoo-feedDb").build();
         feedDao = db.feedDao();
 
@@ -74,12 +78,15 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(response -> {
                     if (!response.isEmpty()) {
                         updateData(response);
-                    } else {
-                        showError("No Updates Available....");
                     }
                 });
 
-        //rssParser.getRssFeed(BASE_URL);
+
+        if( preferences.getBoolean("firstLaunch", true)) {
+            rssParser.getRssFeed(BASE_URL);
+            editor.putBoolean("firstLaunch", false).apply();
+        }
+
 
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
