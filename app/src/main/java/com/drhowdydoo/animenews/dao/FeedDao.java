@@ -11,6 +11,7 @@ import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface FeedDao {
@@ -23,5 +24,11 @@ public interface FeedDao {
 
     @Query("UPDATE RssItem SET image_url = :imageUrl WHERE guid = :guid AND image_url IS NULL")
     Completable updateFeedImage(String imageUrl, String guid);
+
+    @Query("SELECT COUNT(*) FROM RssItem")
+    Single<Long> getRowCount();
+
+    @Query("DELETE FROM RssItem WHERE guid NOT IN (SELECT guid FROM RssItem ORDER BY pub_date DESC LIMIT 50)")
+    void deleteOldestRows();
 
 }

@@ -16,8 +16,7 @@ public class DateConverter implements TypeConverter<ZonedDateTime> {
     public ZonedDateTime read(String value) throws Exception {
         OffsetDateTime inputDateTime = OffsetDateTime.parse(value, inputFormatter);
         ZoneId localTimeZone = ZoneId.systemDefault();
-        ZonedDateTime localDateTime = inputDateTime.atZoneSameInstant(localTimeZone);
-        return localDateTime;
+        return inputDateTime.atZoneSameInstant(localTimeZone);
     }
 
     @Override

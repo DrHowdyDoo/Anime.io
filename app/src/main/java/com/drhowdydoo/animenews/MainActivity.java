@@ -1,5 +1,10 @@
 package com.drhowdydoo.animenews;
 
+import android.annotation.SuppressLint;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,6 +22,7 @@ import com.drhowdydoo.animenews.database.FeedDatabase;
 import com.drhowdydoo.animenews.databinding.ActivityMainBinding;
 import com.drhowdydoo.animenews.model.RssItem;
 import com.drhowdydoo.animenews.network.RssParser;
+import com.drhowdydoo.animenews.service.DBCleanupService;
 import com.drhowdydoo.animenews.util.MyDiffUtilCallback;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.MaterialColors;
@@ -27,22 +33,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "https://animenewsnetwork.com/newsfeed/";
     private static final String TAG = "MainActivity";
-    private static FeedDao feedDao;
     private ActivityMainBinding binding;
-    private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerViewAdapter adapter;
+    private RecyclerView recyclerView;
     private List<RssItem> feeds;
 
+    @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FeedDao feedDao;
         super.onCreate(savedInstanceState);
         DynamicColors.applyToActivityIfAvailable(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -72,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         RssParser rssParser = new RssParser(this, feedDao);
 
-        Disposable feedDataDisposable = feedDao.getAllFeeds()
+        feedDao.getAllFeeds()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
@@ -88,11 +94,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        swipeRefreshLayout.setOnRefreshListener(() -> rssParser.getRssFeed(BASE_URL));
 
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            rssParser.getRssFeed(BASE_URL);
-
-        });
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        ComponentName componentName = new ComponentName(this, DBCleanupService.class);
+        JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                .setPeriodic(24 * 60 * 60 * 1000L) // run once per day
+                .build();
+        jobScheduler.schedule(jobInfo);
 
     }
 
@@ -104,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         feeds.clear();
         feeds.addAll(updatedFeeds);
         diffResult.dispatchUpdatesTo(adapter);
+        recyclerView.smoothScrollToPosition(0);
     }
 
     public RecyclerViewAdapter getAdapter() {

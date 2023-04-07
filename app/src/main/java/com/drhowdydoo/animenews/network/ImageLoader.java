@@ -1,5 +1,6 @@
 package com.drhowdydoo.animenews.network;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.util.Pair;
 
@@ -17,9 +18,7 @@ import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -36,6 +35,7 @@ public class ImageLoader {
         this.activity = activity;
     }
 
+    @SuppressLint("CheckResult")
     public void fetchImages(String baseUrl, List<String> imageUrls, FeedDao feedDao) {
 
         imageUrls.removeAll(oldList);
@@ -51,7 +51,7 @@ public class ImageLoader {
                 .build();
 
         OGApi api = retrofit.create(OGApi.class);
-        Disposable disposable = Observable.fromIterable(imageUrls)
+        Observable.fromIterable(imageUrls)
                 .flatMap(url -> api.getPage(url)
                         .subscribeOn(Schedulers.io())
                         .map(response -> {
@@ -76,17 +76,6 @@ public class ImageLoader {
 
                 }, error -> {
                     Log.e(TAG, "Error fetching images !", error);
-                    if (error instanceof retrofit2.adapter.rxjava3.HttpException) {
-                        HttpException httpException = (HttpException) error;
-                        try {
-                            int httpCode = httpException.code();
-                            if (httpCode == 429) {
-                                activity.showError("Too many Requests !");
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
                     activity.showError("Something went wrong !");
                 });
 
