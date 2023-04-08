@@ -28,6 +28,7 @@
             android:id="@+id/material_toolbar"
             android:elevation="0dp"
             app:title="Anime News"
+            app:menu="@menu/app_bar"
             app:layout_collapseMode="pin"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"/>

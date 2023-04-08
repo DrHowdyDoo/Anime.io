@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,19 +22,25 @@ import com.drhowdydoo.animenews.adapter.RecyclerViewAdapter;
 import com.drhowdydoo.animenews.dao.FeedDao;
 import com.drhowdydoo.animenews.database.FeedDatabase;
 import com.drhowdydoo.animenews.databinding.ActivityMainBinding;
+import com.drhowdydoo.animenews.databinding.FilterDialogBinding;
 import com.drhowdydoo.animenews.model.RssItem;
 import com.drhowdydoo.animenews.network.RssParser;
 import com.drhowdydoo.animenews.service.DBCleanupService;
 import com.drhowdydoo.animenews.util.MyDiffUtilCallback;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.MaterialColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,11 +52,12 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerViewAdapter adapter;
     private RecyclerView recyclerView;
     private List<RssItem> feeds;
+    private CompositeDisposable disposables;
+    private FeedDao feedDao;
 
     @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        FeedDao feedDao;
         super.onCreate(savedInstanceState);
         DynamicColors.applyToActivitiesIfAvailable(getApplication());
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -79,14 +87,24 @@ public class MainActivity extends AppCompatActivity {
 
         RssParser rssParser = new RssParser(this, feedDao);
 
-        feedDao.getAllFeeds()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response -> {
-                    if (!response.isEmpty()) {
-                        updateData(response);
-                    }
-                });
+        Set<String> filterSet = preferences.getStringSet("com.drhowdydoo.filters",null);
+        disposables = new CompositeDisposable();
+
+        if (filterSet!= null) {
+            applyFilters(filterSet);
+        } else {
+            disposables.clear();
+            disposables.add(feedDao.getAllFeeds()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(response -> {
+                        if (!response.isEmpty()) {
+                            updateData(response);
+                        }
+                    }));
+        }
+
+
 
 
         if (preferences.getBoolean("firstLaunch", true)) {
@@ -105,6 +123,41 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         jobScheduler.schedule(jobInfo);
 
+
+
+        binding.materialToolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.filter) {
+                FilterDialogBinding filterDialogBinding = FilterDialogBinding.inflate(LayoutInflater.from(this));
+                MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+                materialAlertDialogBuilder
+                        .setTitle("Apply Filters")
+                        .setView(filterDialogBinding.getRoot())
+                        .setPositiveButton("Apply", (dialog, which) -> {
+                            Set<String> filters = new HashSet<>();
+                            Set<String> filterChipIds = new HashSet<>();
+                            List<Integer> checkIds = filterDialogBinding.chipGroup.getCheckedChipIds();
+                            checkIds.forEach(id -> {
+                                Chip chip = filterDialogBinding.getRoot().findViewById(id);
+                                filters.add(chip.getText().toString());
+                                filterChipIds.add(String.valueOf(id));
+                            });
+                            editor.putStringSet("com.drhowdydoo.filters",filters).apply();
+                            editor.putStringSet("com.drhowdydoo.checkedFilters",filterChipIds).apply();
+                            applyFilters(filters);
+                        }).show();
+                Set<String> checkedFilterChips = preferences.getStringSet("com.drhowdydoo.checkedFilters",null);
+                if (checkedFilterChips != null) {
+                    checkedFilterChips.forEach(id -> {
+                        Chip chip = filterDialogBinding.getRoot().findViewById(Integer.parseInt(id));
+                        chip.setChecked(true);
+                    });
+                }
+                return true;
+            } else {
+                return false;
+            }
+        });
+
     }
 
 
@@ -119,6 +172,18 @@ public class MainActivity extends AppCompatActivity {
         feeds.addAll(updatedFeeds);
         diffResult.dispatchUpdatesTo(adapter);
         recyclerView.smoothScrollToPosition(0);
+    }
+
+    public void applyFilters(Set<String> filterSet){
+        disposables.clear();
+        disposables.add(feedDao.getAllFeeds(filterSet)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                    if (!response.isEmpty()) {
+                        updateData(response);
+                    }
+                }));
     }
 
     public RecyclerViewAdapter getAdapter() {

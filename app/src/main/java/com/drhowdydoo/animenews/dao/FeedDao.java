@@ -8,6 +8,7 @@ import androidx.room.Query;
 import com.drhowdydoo.animenews.model.RssItem;
 
 import java.util.List;
+import java.util.Set;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
@@ -21,6 +22,9 @@ public interface FeedDao {
 
     @Query("SELECT * FROM RssItem ORDER BY datetime(pub_date) DESC")
     Observable<List<RssItem>> getAllFeeds();
+
+    @Query("SELECT * FROM RssItem WHERE category IN (:category) ORDER BY datetime(pub_date) DESC")
+    Observable<List<RssItem>> getAllFeeds(Set<String> category);
 
     @Query("UPDATE RssItem SET image_url = :imageUrl WHERE guid = :guid AND image_url IS NULL")
     Completable updateFeedImage(String imageUrl, String guid);

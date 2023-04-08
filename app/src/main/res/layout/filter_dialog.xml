@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:id="@+id/root_layout"
+    android:orientation="vertical">
+
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group"
+        android:layout_marginTop="26dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:chipSpacingVertical="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_anime"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipCornerRadius="16dp"
+            android:text="Anime"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_manga"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipCornerRadius="16dp"
+            android:text="Manga"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_novels"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipCornerRadius="16dp"
+            android:text="Novels"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_games"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipCornerRadius="16dp"
+            android:text="Games"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_music"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipCornerRadius="16dp"
+            android:text="Music"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_events"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipCornerRadius="16dp"
+            android:text="Events"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_industry"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipCornerRadius="16dp"
+            android:text="Industry"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_people"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipCornerRadius="16dp"
+            android:text="People"/>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_live_action"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipCornerRadius="16dp"
+            android:text="Live Action"/>
+
+    </com.google.android.material.chip.ChipGroup>
+
+
+</LinearLayout>

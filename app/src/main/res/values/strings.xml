@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Anime.io</string>
     <string name="content_description">Feed Thumbnail</string>
+    <string name="filters">filters</string>
+    <string name="settings">settings</string>
 </resources>
