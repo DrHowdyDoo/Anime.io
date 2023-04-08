@@ -27,7 +27,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/material_toolbar"
             android:elevation="0dp"
-            app:title="@string/app_name"
+            app:title="Anime News"
             app:layout_collapseMode="pin"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"/>
