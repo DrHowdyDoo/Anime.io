@@ -23,24 +23,22 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class ImageLoader {
+public class HtmlParser {
 
     private static final String TAG = "ImageLoader";
-
+    private static List<String> oldList = new ArrayList<>();
     private final MainActivity activity;
 
-    private static List<String> oldList = new ArrayList<>();
-
-    public ImageLoader(MainActivity activity) {
+    public HtmlParser(MainActivity activity) {
         this.activity = activity;
     }
 
     @SuppressLint("CheckResult")
-    public void fetchImages(String baseUrl, List<String> imageUrls, FeedDao feedDao) {
+    public void extractImageUrl(String baseUrl, List<String> pageUrls, FeedDao feedDao) {
 
-        imageUrls.removeAll(oldList);
-        if (!imageUrls.isEmpty()) {
-            oldList.addAll(imageUrls);
+        pageUrls.removeAll(oldList);
+        if (!pageUrls.isEmpty()) {
+            oldList.addAll(pageUrls);
         }
 
 
@@ -51,7 +49,7 @@ public class ImageLoader {
                 .build();
 
         OGApi api = retrofit.create(OGApi.class);
-        Observable.fromIterable(imageUrls)
+        Observable.fromIterable(pageUrls)
                 .flatMap(url -> api.getPage(url)
                         .subscribeOn(Schedulers.io())
                         .map(response -> {

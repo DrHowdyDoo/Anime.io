@@ -30,6 +30,7 @@ public class RssParser {
 
     private final MainActivity activity;
     private final FeedDao feedDao;
+
     public RssParser(MainActivity activity, FeedDao feedDao) {
         this.activity = activity;
         this.feedDao = feedDao;
@@ -55,7 +56,7 @@ public class RssParser {
             @Override
             public void onResponse(@NonNull Call<RssFeed> call, @NonNull Response<RssFeed> response) {
                 if (!response.isSuccessful()) {
-                    Log.e(TAG, "Response code: " + response.code());
+                    Log.e(TAG, "Response Code: " + response.code());
                     Log.e(TAG, "Response Message: " + response.message());
                     Log.e(TAG, "Response Body: " + response.body());
                     return;
@@ -74,12 +75,11 @@ public class RssParser {
                             activity.stopRefreshing();
                         });
 
-                ImageLoader imageLoader = new ImageLoader(activity);
-                List<String> imagesUrl = items.stream().map(RssItem::getGuid).collect(Collectors.toList());
-                if(!imagesUrl.isEmpty()) {
-                    imageLoader.fetchImages(BASE_URL_THUMBNAIL, imagesUrl, feedDao);
+                HtmlParser htmlParser = new HtmlParser(activity);
+                List<String> pageUrls = items.stream().map(RssItem::getGuid).collect(Collectors.toList());
+                if (!pageUrls.isEmpty()) {
+                    htmlParser.extractImageUrl(BASE_URL_THUMBNAIL, pageUrls, feedDao);
                 }
-
 
             }
 

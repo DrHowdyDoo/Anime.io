@@ -15,16 +15,16 @@ public class DBCleanupService extends JobService {
     @SuppressLint("CheckResult")
     @Override
     public boolean onStartJob(JobParameters params) {
-         FeedDatabase db = FeedDatabase.getInstance(this);
-         FeedDao feedDao = db.feedDao();
+        FeedDatabase db = FeedDatabase.getInstance(this);
+        FeedDao feedDao = db.feedDao();
 
-         feedDao.getRowCount()
-                 .subscribeOn(Schedulers.io())
-                 .subscribe(count -> {
-                     if (count > 50) {
-                         feedDao.deleteOldestRows();
-                     }
-                 });
+        feedDao.getRowCount()
+                .subscribeOn(Schedulers.io())
+                .subscribe(count -> {
+                    if (count > 50) {
+                        feedDao.deleteOldestRows();
+                    }
+                });
 
         return false;
     }

@@ -17,8 +17,6 @@ public abstract class FeedDatabase extends RoomDatabase {
 
     private static FeedDatabase INSTANCE;
 
-    public abstract FeedDao feedDao();
-
     public static synchronized FeedDatabase getInstance(Context context) {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
@@ -27,4 +25,6 @@ public abstract class FeedDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
+
+    public abstract FeedDao feedDao();
 }

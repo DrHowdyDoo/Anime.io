@@ -48,7 +48,7 @@ public class WebPage extends AppCompatActivity {
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-                setAlgorithmicDarkeningAllowed(webView.getSettings(),true);
+                setAlgorithmicDarkeningAllowed(webView.getSettings(), true);
             }
         }
         webView.setWebViewClient(new WebViewClient() {
@@ -60,7 +60,7 @@ public class WebPage extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                TransitionManager.beginDelayedTransition(binding.getRoot(),transition);
+                TransitionManager.beginDelayedTransition(binding.getRoot(), transition);
                 binding.icReader.setVisibility(View.GONE);
                 binding.progressIndicator.setVisibility(View.GONE);
                 webView.setVisibility(View.VISIBLE);

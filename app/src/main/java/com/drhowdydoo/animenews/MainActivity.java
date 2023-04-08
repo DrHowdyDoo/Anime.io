@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         FeedDao feedDao;
         super.onCreate(savedInstanceState);
-        DynamicColors.applyToActivityIfAvailable(this);
+        DynamicColors.applyToActivitiesIfAvailable(getApplication());
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
 
-        if( preferences.getBoolean("firstLaunch", true)) {
+        if (preferences.getBoolean("firstLaunch", true)) {
             binding.feedPlaceholder.setVisibility(View.VISIBLE);
             rssParser.getRssFeed(BASE_URL);
             editor.putBoolean("firstLaunch", false).apply();
@@ -109,7 +109,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void updateData(List<RssItem> updatedFeeds) {
-        if (binding.feedPlaceholder.isShown()) { binding.feedPlaceholder.setVisibility(View.GONE);}
+        if (binding.feedPlaceholder.isShown()) {
+            binding.feedPlaceholder.setVisibility(View.GONE);
+        }
         swipeRefreshLayout.setRefreshing(false);
         MyDiffUtilCallback diffCallback = new MyDiffUtilCallback(feeds, updatedFeeds);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);

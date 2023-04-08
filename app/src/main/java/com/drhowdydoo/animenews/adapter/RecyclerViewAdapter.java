@@ -64,7 +64,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     .transform(new RoundedCorners(50))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .priority(Priority.HIGH)
-                    .placeholder(R.drawable.image_placeholder)
+                    .placeholder(R.drawable.img_placeholder)
                     .error(R.drawable.round_broken_image_24)
                     .into(holder.thumbnail);
         } else {
