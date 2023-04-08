@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if( preferences.getBoolean("firstLaunch", true)) {
+            binding.feedPlaceholder.setVisibility(View.VISIBLE);
             rssParser.getRssFeed(BASE_URL);
             editor.putBoolean("firstLaunch", false).apply();
         }
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void updateData(List<RssItem> updatedFeeds) {
+        if (binding.feedPlaceholder.isShown()) { binding.feedPlaceholder.setVisibility(View.GONE);}
         swipeRefreshLayout.setRefreshing(false);
         MyDiffUtilCallback diffCallback = new MyDiffUtilCallback(feeds, updatedFeeds);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
