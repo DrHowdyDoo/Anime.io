@@ -90,18 +90,10 @@ public class MainActivity extends AppCompatActivity {
         Set<String> filterSet = preferences.getStringSet("com.drhowdydoo.filters",null);
         disposables = new CompositeDisposable();
 
-        if (filterSet!= null) {
-            applyFilters(filterSet);
+        if (filterSet!= null && !filterSet.isEmpty()) {
+            getFilteredFeeds(filterSet);
         } else {
-            disposables.clear();
-            disposables.add(feedDao.getAllFeeds()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(response -> {
-                        if (!response.isEmpty()) {
-                            updateData(response);
-                        }
-                    }));
+            getFeeds();
         }
 
 
@@ -143,7 +135,9 @@ public class MainActivity extends AppCompatActivity {
                             });
                             editor.putStringSet("com.drhowdydoo.filters",filters).apply();
                             editor.putStringSet("com.drhowdydoo.checkedFilters",filterChipIds).apply();
-                            applyFilters(filters);
+                            if (filters.isEmpty()) {
+                                getFeeds();
+                            } else {getFilteredFeeds(filters);}
                         }).show();
                 Set<String> checkedFilterChips = preferences.getStringSet("com.drhowdydoo.checkedFilters",null);
                 if (checkedFilterChips != null) {
@@ -174,15 +168,31 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.smoothScrollToPosition(0);
     }
 
-    public void applyFilters(Set<String> filterSet){
+    public void getFilteredFeeds(Set<String> filterSet){
         disposables.clear();
         disposables.add(feedDao.getAllFeeds(filterSet)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
-                    if (!response.isEmpty()) {
-                        updateData(response);
-                    }
+
+                    if (response.isEmpty()) {binding.emptyPlaceholder.setVisibility(View.VISIBLE);}
+                    else binding.emptyPlaceholder.setVisibility(View.GONE);
+                    updateData(response);
+
+                }));
+    }
+
+    public void getFeeds(){
+        disposables.clear();
+        disposables.add(feedDao.getAllFeeds()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                    if (response.isEmpty()) {binding.emptyPlaceholder.setVisibility(View.VISIBLE);}
+                    else binding.emptyPlaceholder.setVisibility(View.GONE);
+
+                    updateData(response);
+
                 }));
     }
 
