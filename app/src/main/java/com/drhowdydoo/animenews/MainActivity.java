@@ -156,9 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void updateData(List<RssItem> updatedFeeds) {
-        if (binding.feedPlaceholder.isShown()) {
-            binding.feedPlaceholder.setVisibility(View.GONE);
-        }
+
         swipeRefreshLayout.setRefreshing(false);
         MyDiffUtilCallback diffCallback = new MyDiffUtilCallback(feeds, updatedFeeds);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
@@ -188,9 +186,11 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
-                    if (response.isEmpty()) {binding.emptyPlaceholder.setVisibility(View.VISIBLE);}
-                    else binding.emptyPlaceholder.setVisibility(View.GONE);
 
+                    binding.emptyPlaceholder.setVisibility(View.GONE);
+                    if (binding.feedPlaceholder.isShown() && !response.isEmpty()) {
+                        binding.feedPlaceholder.setVisibility(View.GONE);
+                    }
                     updateData(response);
 
                 }));
