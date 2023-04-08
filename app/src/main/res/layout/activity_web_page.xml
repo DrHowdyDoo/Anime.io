@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="contentDescription"
     tools:context=".WebPage">
 
     <WebView

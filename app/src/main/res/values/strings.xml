@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Anime News</string>
+    <string name="content_description">Feed Thumbnail</string>
 </resources>
