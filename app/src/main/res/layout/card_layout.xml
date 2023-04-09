@@ -4,8 +4,13 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:foreground="?selectableItemBackgroundBorderless"
-    android:layout_margin="20dp">
+    android:foreground="@drawable/ripple_bg"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="12dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="16dp">
 
 
     <ImageView
