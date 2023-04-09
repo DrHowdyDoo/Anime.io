@@ -111,6 +111,13 @@
 -keep class retrofit2.converter.rxjava2.** { *; }
 -keepclassmembers class retrofit2.converter.rxjava2.** { *; }
 
+# Google's Dynamic Colors
+-keep class androidx.dynamicanimation.animation.** { *; }
+-keep class androidx.dynamicanimation.animation.FloatPropertyCompat { *; }
+-keep class androidx.dynamicanimation.animation.SpringAnimation { *; }
+-keep class androidx.dynamicanimation.animation.SpringForce { *; }
+
+
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.

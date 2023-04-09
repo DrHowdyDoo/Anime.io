@@ -25,7 +25,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class HtmlParser {
 
-    private static final String TAG = "ImageLoader";
+    private static final String TAG = "HtmlParser";
     private static List<String> oldList = new ArrayList<>();
     private final MainActivity activity;
 
