@@ -5,6 +5,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearProgressIndicator syncIndicator;
     private RecyclerViewAdapter adapter;
     private RecyclerView recyclerView;
     private List<RssItem> feeds;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         swipeRefreshLayout = binding.swipeRefresh;
+        syncIndicator = binding.syncIndicator;
         recyclerView = binding.recyclerView;
 
         int progressBackgroundColor = MaterialColors.getColor(this, com.google.android.material.R.attr.colorBackgroundFloating, Color.WHITE);
@@ -87,6 +91,12 @@ public class MainActivity extends AppCompatActivity {
 
         RssParser rssParser = new RssParser(this, feedDao);
 
+        if (preferences.getBoolean("com.drhowdydoo.settings.syncOnStart",false)) {
+            syncIndicator.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setEnabled(false);
+            rssParser.getRssFeed(BASE_URL);
+        }
+
         Set<String> filterSet = preferences.getStringSet("com.drhowdydoo.filters",null);
         disposables = new CompositeDisposable();
 
@@ -95,8 +105,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             getFeeds();
         }
-
-
 
 
         if (preferences.getBoolean("firstLaunch", true)) {
@@ -146,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
                         chip.setChecked(true);
                     });
                 }
+                return true;
+            } else if (item.getItemId() == R.id.settings) {
+                startActivity(new Intent(this,SettingsActivity.class));
                 return true;
             } else {
                 return false;
@@ -210,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopRefreshing() {
+        swipeRefreshLayout.setEnabled(true);
+        syncIndicator.setVisibility(View.GONE);
         swipeRefreshLayout.setRefreshing(false);
     }
 

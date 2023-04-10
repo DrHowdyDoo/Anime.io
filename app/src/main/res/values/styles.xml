@@ -2,9 +2,9 @@
 <resources>
 
 
-    <style name="ExpandedTitleTextAppearance" parent="TextAppearance.Material3.DisplayMedium">
-        <item name="android:fontFamily">@font/rubik_medium</item>
-        <item name="fontFamily">@font/rubik_medium</item>
+    <style name="ExpandedTitleTextAppearance" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/rubik</item>
+        <item name="fontFamily">@font/rubik</item>
     </style>
 
     <style name="TitleTextAppearance" parent="TextAppearance.Material3.TitleLarge">
@@ -12,6 +12,10 @@
         <item name="android:textSize">20sp</item>
         <item name="fontFamily">@font/rubik_medium</item>
         <item name="android:fontFamily">@font/rubik_medium</item>
+    </style>
+
+    <style name="SettingsTitleTextAppearance" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="BodyTextAppearance" parent="TextAppearance.Material3.BodyMedium">

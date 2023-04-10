@@ -18,6 +18,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,8 +73,9 @@ public class RssParser {
                 ImageExtractor imageExtractor = new ImageExtractor(activity);
 
                 feedDao.insertAll(items)
-                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .doFinally(activity::stopRefreshing)
+                        .subscribeOn(Schedulers.io())
                         .subscribe(() -> feedDao.getGuids()
                                 .subscribeOn(Schedulers.io())
                                 .subscribe(ids -> imageExtractor.extractImageUrl(BASE_URL_THUMBNAIL, ids, feedDao)), error -> {

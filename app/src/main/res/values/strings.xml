@@ -2,5 +2,8 @@
     <string name="app_name">Anime.io</string>
     <string name="content_description">Feed Thumbnail</string>
     <string name="filters">filters</string>
-    <string name="settings">settings</string>
+    <string name="settings">Settings</string>
+    <string name="sync_once_on_start">Sync once on start</string>
+    <string name="database">Database</string>
+    <string name="settings_article_limit">com.drhowdydoo.settings.articleLimit</string>
 </resources>

@@ -38,6 +38,17 @@
 
 </com.google.android.material.appbar.AppBarLayout>
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/sync_indicator"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/appbar_layout"
+        app:layout_anchorGravity="bottom"
+        app:trackCornerRadius="6dp"
+        android:indeterminate="true"
+        />
+
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
@@ -100,7 +111,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No results"
-            android:textAppearance="?textAppearanceLabelLarge"/>
+            android:textAppearance="?textAppearanceLabelLarge" />
 
         <TextView
             android:id="@+id/txt_empty_body"
