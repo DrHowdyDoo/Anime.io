@@ -7,7 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.drhowdydoo.animenews.converter.ZonedDateTimeConverter;
+import com.drhowdydoo.animenews.util.ZonedDateTimeConverter;
 import com.drhowdydoo.animenews.dao.FeedDao;
 import com.drhowdydoo.animenews.model.RssItem;
 

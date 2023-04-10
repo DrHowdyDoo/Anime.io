@@ -1,4 +1,4 @@
-package com.drhowdydoo.animenews.converter;
+package com.drhowdydoo.animenews.util;
 
 import com.tickaroo.tikxml.TypeConverter;
 

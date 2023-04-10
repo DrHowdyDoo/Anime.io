@@ -24,9 +24,9 @@ import com.drhowdydoo.animenews.database.FeedDatabase;
 import com.drhowdydoo.animenews.databinding.ActivityMainBinding;
 import com.drhowdydoo.animenews.databinding.FilterDialogBinding;
 import com.drhowdydoo.animenews.model.RssItem;
-import com.drhowdydoo.animenews.network.RssParser;
 import com.drhowdydoo.animenews.service.DBCleanupService;
 import com.drhowdydoo.animenews.util.MyDiffUtilCallback;
+import com.drhowdydoo.animenews.util.RssParser;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.MaterialColors;
@@ -158,12 +158,21 @@ public class MainActivity extends AppCompatActivity {
     public void updateData(List<RssItem> updatedFeeds) {
 
         swipeRefreshLayout.setRefreshing(false);
+        int currentPosition = 0;
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager != null) {
+            currentPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+            if (currentPosition == RecyclerView.NO_POSITION) {
+                currentPosition = 0;
+            }
+        }
         MyDiffUtilCallback diffCallback = new MyDiffUtilCallback(feeds, updatedFeeds);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
         feeds.clear();
         feeds.addAll(updatedFeeds);
         diffResult.dispatchUpdatesTo(adapter);
-        recyclerView.smoothScrollToPosition(0);
+        int finalCurrentPosition = currentPosition;
+        recyclerView.post(() -> recyclerView.smoothScrollToPosition(finalCurrentPosition));
     }
 
     public void getFilteredFeeds(Set<String> filterSet){

@@ -1,4 +1,4 @@
-package com.drhowdydoo.animenews.network;
+package com.drhowdydoo.animenews.util;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -17,6 +17,7 @@ import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,7 +28,6 @@ public class RssParser {
 
     private static final String TAG = "RssParser";
     private static final String BASE_URL_THUMBNAIL = "https://www.animenewsnetwork.com/cms/";
-
     private final MainActivity activity;
     private final FeedDao feedDao;
 
@@ -49,36 +49,41 @@ public class RssParser {
                 .build();
 
         RssApi rssApi = retrofit.create(RssApi.class);
-        Call<RssFeed> call = rssApi.getFeed();
+        Call<RssFeed> callRssApi = rssApi.getFeed();
 
-        call.enqueue(new Callback<RssFeed>() {
+        callRssApi.enqueue(new Callback<RssFeed>() {
             @SuppressLint("CheckResult")
             @Override
             public void onResponse(@NonNull Call<RssFeed> call, @NonNull Response<RssFeed> response) {
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Response Code: " + response.code());
                     Log.e(TAG, "Response Message: " + response.message());
-                    Log.e(TAG, "Response Body: " + response.body());
                     return;
                 }
 
                 RssFeed feed = response.body();
+                if (feed == null) {
+                    activity.stopRefreshing();
+                    activity.showError("Received empty response from the server !");
+                    return;
+                }
                 List<RssItem> items = feed.getChannel().getRssItems();
 
                 feedDao.insertAll(items)
                         .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doFinally(activity::stopRefreshing)
                         .subscribe(() -> {
-                            Log.d(TAG, "Write operation Successful");
-                            activity.stopRefreshing();
+
                         }, error -> {
                             Log.e(TAG, "Error occurred while writing to database !", error);
-                            activity.stopRefreshing();
+                            activity.showError("Something went wrong !");
                         });
 
-                HtmlParser htmlParser = new HtmlParser(activity);
+                ImageExtractor imageExtractor = new ImageExtractor(activity);
                 List<String> pageUrls = items.stream().map(RssItem::getGuid).collect(Collectors.toList());
                 if (!pageUrls.isEmpty()) {
-                    htmlParser.extractImageUrl(BASE_URL_THUMBNAIL, pageUrls, feedDao);
+                    imageExtractor.extractImageUrl(BASE_URL_THUMBNAIL, pageUrls, feedDao);
                 }
 
             }
@@ -89,6 +94,7 @@ public class RssParser {
                 activity.stopRefreshing();
                 activity.showError("Error fetching RSS feeds !");
             }
+
         });
 
 
