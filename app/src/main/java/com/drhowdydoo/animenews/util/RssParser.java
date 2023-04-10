@@ -14,10 +14,10 @@ import com.tickaroo.tikxml.TikXml;
 import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter;
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory;
 
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,6 +53,7 @@ public class RssParser {
 
         callRssApi.enqueue(new Callback<RssFeed>() {
             @SuppressLint("CheckResult")
+            @SuppressWarnings("ResultOfMethodCallIgnored")
             @Override
             public void onResponse(@NonNull Call<RssFeed> call, @NonNull Response<RssFeed> response) {
                 if (!response.isSuccessful()) {
@@ -68,31 +69,30 @@ public class RssParser {
                     return;
                 }
                 List<RssItem> items = feed.getChannel().getRssItems();
+                ImageExtractor imageExtractor = new ImageExtractor(activity);
 
                 feedDao.insertAll(items)
                         .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
                         .doFinally(activity::stopRefreshing)
-                        .subscribe(() -> {
-
-                        }, error -> {
+                        .subscribe(() -> feedDao.getGuids()
+                                .subscribeOn(Schedulers.io())
+                                .subscribe(ids -> imageExtractor.extractImageUrl(BASE_URL_THUMBNAIL, ids, feedDao)), error -> {
                             Log.e(TAG, "Error occurred while writing to database !", error);
                             activity.showError("Something went wrong !");
                         });
-
-                ImageExtractor imageExtractor = new ImageExtractor(activity);
-                List<String> pageUrls = items.stream().map(RssItem::getGuid).collect(Collectors.toList());
-                if (!pageUrls.isEmpty()) {
-                    imageExtractor.extractImageUrl(BASE_URL_THUMBNAIL, pageUrls, feedDao);
-                }
-
             }
 
             @Override
             public void onFailure(@NonNull Call<RssFeed> call, @NonNull Throwable t) {
-                Log.e(TAG, "Error fetching RSS feed", t);
                 activity.stopRefreshing();
-                activity.showError("Error fetching RSS feeds !");
+                if (t instanceof SocketTimeoutException) {
+                    activity.showError("Network request timed out. Please Try Again");
+                } else if (t instanceof UnknownHostException) {
+                    activity.showError("No internet connection !");
+                } else {
+                    Log.e(TAG, "Error fetching RSS feed " + t);
+                    activity.showError("Error fetching RSS feeds !");
+                }
             }
 
         });

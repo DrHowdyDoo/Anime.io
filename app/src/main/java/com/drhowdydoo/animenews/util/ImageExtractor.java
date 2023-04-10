@@ -13,7 +13,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -25,7 +24,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class ImageExtractor {
 
     private static final String TAG = "ImageExtractor";
-    private static List<String> oldList = new ArrayList<>();
     private final MainActivity activity;
 
     public ImageExtractor(MainActivity activity) {
@@ -35,11 +33,8 @@ public class ImageExtractor {
     @SuppressLint({"CheckResult","CheckReturnValue"})
     public void extractImageUrl(String baseUrl, List<String> pageUrls, FeedDao feedDao) {
 
-        pageUrls.removeAll(oldList);
-        if (!pageUrls.isEmpty()) {
-            oldList.addAll(pageUrls);
-        }
-
+       if (pageUrls.isEmpty()) { return; }
+        Log.d(TAG, "extractImageUrl: " + pageUrls.size());
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)

@@ -35,4 +35,7 @@ public interface FeedDao {
     @Query("DELETE FROM RssItem WHERE guid NOT IN (SELECT guid FROM RssItem ORDER BY pub_date DESC LIMIT 50)")
     void deleteOldestRows();
 
+    @Query("SELECT guid FROM RssItem WHERE image_url IS NULL")
+    Observable<List<String>> getGuids();
+
 }
