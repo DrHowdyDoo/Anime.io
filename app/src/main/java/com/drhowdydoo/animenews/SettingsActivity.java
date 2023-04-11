@@ -25,35 +25,37 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("com.drhowdydoo.preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
-        String lastDBCleanUpTime = preferences.getString("com.drhowdydoo.service.dbCleanUpTime","");
-        LocalDateTime date = LocalDateTime.parse(lastDBCleanUpTime,DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String lastDBCleanUpTime = preferences.getString("com.drhowdydoo.service.dbCleanUpTime", "");
+        if (!lastDBCleanUpTime.isEmpty()){
+            LocalDateTime date = LocalDateTime.parse(lastDBCleanUpTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            binding.txtDbCleanupTime.setText("Last database cleanup at " + date.format(format));
+        }
 
-        binding.txtDbCleanupTime.setText("Last database cleanup at " + date.format(format));
 
-        boolean syncOnStart = preferences.getBoolean("com.drhowdydoo.settings.syncOnStart",false);
+        boolean syncOnStart = preferences.getBoolean("com.drhowdydoo.settings.syncOnStart", false);
         binding.switchSyncOnStart.setChecked(syncOnStart);
 
-        binding.switchSyncOnStart.setOnCheckedChangeListener((buttonView, isChecked) -> editor.putBoolean("com.drhowdydoo.settings.syncOnStart",isChecked).apply());
+        binding.switchSyncOnStart.setOnCheckedChangeListener((buttonView, isChecked) -> editor.putBoolean("com.drhowdydoo.settings.syncOnStart", isChecked).apply());
 
-        int savedLimitId = preferences.getInt(getString(R.string.settings_article_limit),0);
+        int savedLimitId = preferences.getInt(getString(R.string.settings_article_limit), 0);
         int checkedLimit = 40;
         if (savedLimitId == 1) checkedLimit = 50;
         else if (savedLimitId == 2) checkedLimit = 60;
 
         binding.txtSubtitleArticleLimit.setText(checkedLimit + " articles");
 
-        CharSequence[] articleLimits = {"40","50","60"};
+        CharSequence[] articleLimits = {"40", "50", "60"};
         binding.articleLimit.setOnClickListener(v -> {
-                int checkedLimitId = preferences.getInt(getString(R.string.settings_article_limit),0);
-                new MaterialAlertDialogBuilder(this)
-                .setTitle("Limit")
-                .setSingleChoiceItems(articleLimits, checkedLimitId, (dialog, which) -> {
-                    editor.putInt(getString(R.string.settings_article_limit),which).apply();
-                    int item = which == 0 ? 40 : which == 1 ? 50 : 60;
-                    binding.txtSubtitleArticleLimit.setText(item + " articles");
-                    dialog.dismiss();
-                })
-                .show();
+            int checkedLimitId = preferences.getInt(getString(R.string.settings_article_limit), 0);
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Limit")
+                    .setSingleChoiceItems(articleLimits, checkedLimitId, (dialog, which) -> {
+                        editor.putInt(getString(R.string.settings_article_limit), which).apply();
+                        int item = which == 0 ? 40 : which == 1 ? 50 : 60;
+                        binding.txtSubtitleArticleLimit.setText(item + " articles");
+                        dialog.dismiss();
+                    })
+                    .show();
         });
     }
 }

@@ -92,16 +92,16 @@ public class MainActivity extends AppCompatActivity {
 
         RssParser rssParser = new RssParser(this, feedDao);
 
-        if (preferences.getBoolean("com.drhowdydoo.settings.syncOnStart",false)) {
+        if (preferences.getBoolean("com.drhowdydoo.settings.syncOnStart", false)) {
             syncIndicator.setVisibility(View.VISIBLE);
             swipeRefreshLayout.setEnabled(false);
             rssParser.getRssFeed(BASE_URL);
         }
 
-        Set<String> filterSet = preferences.getStringSet("com.drhowdydoo.filters",null);
+        Set<String> filterSet = preferences.getStringSet("com.drhowdydoo.filters", null);
         disposables = new CompositeDisposable();
 
-        if (filterSet!= null && !filterSet.isEmpty()) {
+        if (filterSet != null && !filterSet.isEmpty()) {
             getFilteredFeeds(filterSet);
         } else {
             getFeeds();
@@ -140,13 +140,15 @@ public class MainActivity extends AppCompatActivity {
                                 filters.add(chip.getText().toString());
                                 filterChipIds.add(String.valueOf(id));
                             });
-                            editor.putStringSet("com.drhowdydoo.filters",filters).apply();
-                            editor.putStringSet("com.drhowdydoo.checkedFilters",filterChipIds).apply();
+                            editor.putStringSet("com.drhowdydoo.filters", filters).apply();
+                            editor.putStringSet("com.drhowdydoo.checkedFilters", filterChipIds).apply();
                             if (filters.isEmpty()) {
                                 getFeeds();
-                            } else {getFilteredFeeds(filters);}
+                            } else {
+                                getFilteredFeeds(filters);
+                            }
                         }).show();
-                Set<String> checkedFilterChips = preferences.getStringSet("com.drhowdydoo.checkedFilters",null);
+                Set<String> checkedFilterChips = preferences.getStringSet("com.drhowdydoo.checkedFilters", null);
                 if (checkedFilterChips != null) {
                     checkedFilterChips.forEach(id -> {
                         Chip chip = filterDialogBinding.getRoot().findViewById(Integer.parseInt(id));
@@ -155,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             } else if (item.getItemId() == R.id.settings) {
-                startActivity(new Intent(this,SettingsActivity.class));
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             } else {
                 return false;
@@ -181,24 +183,29 @@ public class MainActivity extends AppCompatActivity {
         feeds.addAll(updatedFeeds);
         diffResult.dispatchUpdatesTo(adapter);
         int finalCurrentPosition = currentPosition;
-        recyclerView.post(() -> recyclerView.smoothScrollToPosition(finalCurrentPosition));
+        recyclerView.post(() -> {
+            if (finalCurrentPosition == 0) {
+                recyclerView.smoothScrollToPosition(finalCurrentPosition);
+            }
+        });
     }
 
-    public void getFilteredFeeds(Set<String> filterSet){
+    public void getFilteredFeeds(Set<String> filterSet) {
         disposables.clear();
         disposables.add(feedDao.getAllFeeds(filterSet)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
 
-                    if (response.isEmpty()) {binding.emptyPlaceholder.setVisibility(View.VISIBLE);}
-                    else binding.emptyPlaceholder.setVisibility(View.GONE);
+                    if (response.isEmpty()) {
+                        binding.emptyPlaceholder.setVisibility(View.VISIBLE);
+                    } else binding.emptyPlaceholder.setVisibility(View.GONE);
                     updateData(response);
 
                 }));
     }
 
-    public void getFeeds(){
+    public void getFeeds() {
         disposables.clear();
         disposables.add(feedDao.getAllFeeds()
                 .subscribeOn(Schedulers.io())
@@ -228,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void initDBCleanupService(){
+    private void initDBCleanupService() {
         JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         ComponentName componentName = new ComponentName(this, DBCleanupService.class);
         JobInfo jobInfo = new JobInfo.Builder(1, componentName)

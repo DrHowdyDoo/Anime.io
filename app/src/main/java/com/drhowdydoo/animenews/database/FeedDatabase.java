@@ -7,9 +7,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.drhowdydoo.animenews.util.ZonedDateTimeConverter;
 import com.drhowdydoo.animenews.dao.FeedDao;
 import com.drhowdydoo.animenews.model.RssItem;
+import com.drhowdydoo.animenews.util.ZonedDateTimeConverter;
 
 @Database(entities = {RssItem.class}, version = 1)
 @TypeConverters({ZonedDateTimeConverter.class})

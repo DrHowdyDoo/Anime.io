@@ -23,7 +23,7 @@ public class DBCleanupService extends JobService {
         FeedDao feedDao = db.feedDao();
         SharedPreferences preferences = getSharedPreferences("com.drhowdydoo.preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        int limit = preferences.getInt("com.drhowdydoo.settings.articleLimit",0);
+        int limit = preferences.getInt("com.drhowdydoo.settings.articleLimit", 0);
         if (limit == 0) limit = 40;
         else if (limit == 1) limit = 50;
         else limit = 60;

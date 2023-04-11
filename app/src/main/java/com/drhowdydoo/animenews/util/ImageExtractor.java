@@ -30,10 +30,12 @@ public class ImageExtractor {
         this.activity = activity;
     }
 
-    @SuppressLint({"CheckResult","CheckReturnValue"})
+    @SuppressLint({"CheckResult", "CheckReturnValue"})
     public void extractImageUrl(String baseUrl, List<String> pageUrls, FeedDao feedDao) {
 
-       if (pageUrls.isEmpty()) { return; }
+        if (pageUrls.isEmpty()) {
+            return;
+        }
         Log.d(TAG, "extractImageUrl: " + pageUrls.size());
 
         Retrofit retrofit = new Retrofit.Builder()
