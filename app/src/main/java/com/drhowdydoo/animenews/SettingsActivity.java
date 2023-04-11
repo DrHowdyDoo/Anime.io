@@ -8,7 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.drhowdydoo.animenews.databinding.ActivitySettingsBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class SettingsActivity extends AppCompatActivity {
+
+    private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy h:mm a");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +24,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("com.drhowdydoo.preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
+
+        String lastDBCleanUpTime = preferences.getString("com.drhowdydoo.service.dbCleanUpTime","");
+        LocalDateTime date = LocalDateTime.parse(lastDBCleanUpTime,DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+
+        binding.txtDbCleanupTime.setText("Last database cleanup at " + date.format(format));
 
         boolean syncOnStart = preferences.getBoolean("com.drhowdydoo.settings.syncOnStart",false);
         binding.switchSyncOnStart.setChecked(syncOnStart);

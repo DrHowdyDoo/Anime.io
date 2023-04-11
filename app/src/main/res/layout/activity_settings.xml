@@ -88,5 +88,23 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/outline_info_24"/>
+
+    <TextView
+        android:id="@+id/txt_db_cleanup_time"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        tools:text="Last Database cleanup at 2023-04-02 02:15"
+        android:textAppearance="?textAppearanceLabelLarge"
+        android:alpha="0.8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 
 </LinearLayout>

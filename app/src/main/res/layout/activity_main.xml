@@ -22,6 +22,7 @@
         app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
         android:layout_width="match_parent"
         app:expandedTitleTextAppearance="@style/ExpandedTitleTextAppearance"
+        app:expandedTitleMarginBottom="26dp"
         android:layout_height="?attr/collapsingToolbarLayoutLargeSize">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -32,6 +33,18 @@
             app:layout_collapseMode="pin"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"/>
+
+        <TextView
+            android:id="@+id/txt_subtitle"
+            android:text="@string/news_source"
+            app:layout_collapseParallaxMultiplier="0.3"
+            android:textColor="?colorPrimary"
+            android:textAppearance="?textAppearanceLabelLarge"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="16dp"
+            app:layout_collapseMode="parallax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
 
     </com.google.android.material.appbar.CollapsingToolbarLayout>

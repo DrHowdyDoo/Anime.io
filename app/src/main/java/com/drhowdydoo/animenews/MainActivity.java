@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -108,21 +109,19 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (preferences.getBoolean("firstLaunch", true)) {
+            Log.d(TAG, "onCreate: FirstLaunch");
             binding.feedPlaceholder.setVisibility(View.VISIBLE);
             rssParser.getRssFeed(BASE_URL);
+            initDBCleanupService();
             editor.putBoolean("firstLaunch", false).apply();
         }
 
 
-        swipeRefreshLayout.setOnRefreshListener(() -> rssParser.getRssFeed(BASE_URL));
-
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        ComponentName componentName = new ComponentName(this, DBCleanupService.class);
-        JobInfo jobInfo = new JobInfo.Builder(1, componentName)
-                .setPeriodic(24 * 60 * 60 * 1000L) // run once per day
-                .build();
-        jobScheduler.schedule(jobInfo);
-
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            syncIndicator.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setRefreshing(false);
+            rssParser.getRssFeed(BASE_URL);
+        });
 
 
         binding.materialToolbar.setOnMenuItemClickListener(item -> {
@@ -168,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateData(List<RssItem> updatedFeeds) {
 
-        swipeRefreshLayout.setRefreshing(false);
         int currentPosition = 0;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager != null) {
@@ -223,12 +221,21 @@ public class MainActivity extends AppCompatActivity {
     public void stopRefreshing() {
         swipeRefreshLayout.setEnabled(true);
         syncIndicator.setVisibility(View.GONE);
-        swipeRefreshLayout.setRefreshing(false);
     }
 
     public void showError(String msg) {
         Snackbar.make(binding.getRoot(), msg, BaseTransientBottomBar.LENGTH_SHORT)
                 .show();
+    }
+
+    private void initDBCleanupService(){
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        ComponentName componentName = new ComponentName(this, DBCleanupService.class);
+        JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                .setPeriodic(24 * 60 * 60 * 1000L) // run once per day
+                .setPersisted(true)
+                .build();
+        jobScheduler.schedule(jobInfo);
     }
 
 }

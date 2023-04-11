@@ -33,8 +33,8 @@ public interface FeedDao {
     @Query("SELECT COUNT(*) FROM RssItem")
     Single<Long> getRowCount();
 
-    @Query("DELETE FROM RssItem WHERE guid NOT IN (SELECT guid FROM RssItem ORDER BY pub_date DESC LIMIT 50)")
-    void deleteOldestRows();
+    @Query("DELETE FROM RssItem WHERE guid NOT IN (SELECT guid FROM RssItem ORDER BY pub_date DESC LIMIT :limit)")
+    void deleteOldestRows(int limit);
 
     @Query("SELECT guid FROM RssItem WHERE image_url IS NULL")
     Maybe<List<String>> getGuids();
