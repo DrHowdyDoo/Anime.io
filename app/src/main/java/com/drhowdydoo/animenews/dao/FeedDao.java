@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
@@ -36,6 +37,6 @@ public interface FeedDao {
     void deleteOldestRows();
 
     @Query("SELECT guid FROM RssItem WHERE image_url IS NULL")
-    Observable<List<String>> getGuids();
+    Maybe<List<String>> getGuids();
 
 }

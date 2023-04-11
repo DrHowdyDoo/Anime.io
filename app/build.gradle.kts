@@ -10,8 +10,8 @@ android {
         applicationId = "com.drhowdydoo.animenews"
         minSdk = 27
         targetSdk = 33
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 1
+        versionName = "0.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
