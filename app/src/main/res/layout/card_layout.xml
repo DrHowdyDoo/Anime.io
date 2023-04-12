@@ -61,7 +61,7 @@
             android:textAppearance="@style/LabelTextAppearance"
             tools:text="Anime"
             android:gravity="end|center_vertical"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?colorPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
