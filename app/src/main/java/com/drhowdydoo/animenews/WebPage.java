@@ -19,12 +19,14 @@ import androidx.transition.TransitionManager;
 import androidx.webkit.WebViewFeature;
 
 import com.drhowdydoo.animenews.databinding.ActivityWebPageBinding;
+import com.google.android.material.color.DynamicColors;
 
 public class WebPage extends AppCompatActivity {
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DynamicColors.applyToActivityIfAvailable(this);
         super.onCreate(savedInstanceState);
         ActivityWebPageBinding binding = ActivityWebPageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

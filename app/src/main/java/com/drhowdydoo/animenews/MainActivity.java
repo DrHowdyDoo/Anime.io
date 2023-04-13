@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DynamicColors.applyToActivitiesIfAvailable(getApplication());
+        DynamicColors.applyToActivityIfAvailable(this);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

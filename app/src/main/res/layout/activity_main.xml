@@ -37,7 +37,7 @@
         <TextView
             android:id="@+id/txt_subtitle"
             android:text="@string/news_source"
-            app:layout_collapseParallaxMultiplier="0.3"
+            app:layout_collapseParallaxMultiplier="0.5"
             android:textColor="?colorPrimary"
             android:textAppearance="?textAppearanceLabelLarge"
             android:layout_gravity="bottom|start"

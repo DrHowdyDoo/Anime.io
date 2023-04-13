@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.drhowdydoo.animenews.databinding.ActivitySettingsBinding;
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DynamicColors.applyToActivityIfAvailable(this);
         super.onCreate(savedInstanceState);
         ActivitySettingsBinding binding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
