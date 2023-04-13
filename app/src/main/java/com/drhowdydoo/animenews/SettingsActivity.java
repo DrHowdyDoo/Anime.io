@@ -1,7 +1,11 @@
 package com.drhowdydoo.animenews;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,9 +32,17 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         String lastDBCleanUpTime = preferences.getString("com.drhowdydoo.service.dbCleanUpTime", "");
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        JobInfo jobInfo = jobScheduler.getPendingJob(1);
+        if (jobInfo == null) {
+            binding.warningIc.setVisibility(View.VISIBLE);
+            binding.warningText.setVisibility(View.VISIBLE);
+        }
+
         if (!lastDBCleanUpTime.isEmpty()){
             LocalDateTime date = LocalDateTime.parse(lastDBCleanUpTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            binding.txtDbCleanupTime.setText("Last database cleanup at " + date.format(format));
+            binding.txtDbCleanupTime.setText("Last database cleanup on " + date.format(format));
         }
 
 
@@ -44,7 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (savedLimitId == 1) checkedLimit = 50;
         else if (savedLimitId == 2) checkedLimit = 60;
 
-        binding.txtSubtitleArticleLimit.setText(checkedLimit + " articles");
+        binding.txtSubtitleArticleLimit.setText(checkedLimit + " feeds");
 
         CharSequence[] articleLimits = {"40", "50", "60"};
         binding.articleLimit.setOnClickListener(v -> {
@@ -54,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
                     .setSingleChoiceItems(articleLimits, checkedLimitId, (dialog, which) -> {
                         editor.putInt(getString(R.string.settings_article_limit), which).apply();
                         int item = which == 0 ? 40 : which == 1 ? 50 : 60;
-                        binding.txtSubtitleArticleLimit.setText(item + " articles");
+                        binding.txtSubtitleArticleLimit.setText(item + " feeds");
                         dialog.dismiss();
                     })
                     .show();
