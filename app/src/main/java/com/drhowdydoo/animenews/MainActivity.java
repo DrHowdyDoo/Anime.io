@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setAdapter(adapter);
 
+        new DBCleanupScheduler().schedule(this);
+
         SharedPreferences preferences = getSharedPreferences("com.drhowdydoo.preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
@@ -108,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: FirstLaunch");
             binding.feedPlaceholder.setVisibility(View.VISIBLE);
             rssParser.getRssFeed(BASE_URL);
-            new DBCleanupScheduler().schedule(this);
             editor.putBoolean("firstLaunch", false).apply();
         }
 
@@ -181,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         int finalCurrentPosition = currentPosition;
         recyclerView.post(() -> {
             if (finalCurrentPosition == 0) {
-
                 recyclerView.smoothScrollToPosition(finalCurrentPosition);
             }
         });
