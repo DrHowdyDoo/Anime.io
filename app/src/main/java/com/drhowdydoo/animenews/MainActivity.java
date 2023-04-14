@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private List<RssItem> feeds;
     private CompositeDisposable disposables;
     private FeedDao feedDao;
+    private boolean scrollToTop = false;
 
     @SuppressLint("CheckResult")
     @Override
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(() -> {
             syncIndicator.setVisibility(View.VISIBLE);
             swipeRefreshLayout.setRefreshing(false);
+            scrollToTop = true;
             rssParser.getRssFeed(BASE_URL);
         });
 
@@ -140,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                             editor.putStringSet("com.drhowdydoo.filters", filters).apply();
                             editor.putStringSet("com.drhowdydoo.checkedFilters", filterChipIds).apply();
                             if (filters.isEmpty()) {
+                                scrollToTop = true;
                                 getFeeds();
                             } else {
                                 getFilteredFeeds(filters);
@@ -166,25 +169,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateData(List<RssItem> updatedFeeds) {
 
-        int currentPosition = 0;
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager != null) {
-            currentPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-            if (currentPosition == RecyclerView.NO_POSITION) {
-                currentPosition = 0;
-            }
-        }
         MyDiffUtilCallback diffCallback = new MyDiffUtilCallback(feeds, updatedFeeds);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
         feeds.clear();
         feeds.addAll(updatedFeeds);
         diffResult.dispatchUpdatesTo(adapter);
-        int finalCurrentPosition = currentPosition;
-        recyclerView.post(() -> {
-            if (finalCurrentPosition == 0) {
-                recyclerView.smoothScrollToPosition(finalCurrentPosition);
-            }
-        });
+        if (scrollToTop) recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
+        scrollToTop = false;
     }
 
     public void getFilteredFeeds(Set<String> filterSet) {
