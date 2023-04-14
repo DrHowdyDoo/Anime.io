@@ -1,10 +1,6 @@
 package com.drhowdydoo.animenews;
 
 import android.annotation.SuppressLint;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -26,7 +22,7 @@ import com.drhowdydoo.animenews.database.FeedDatabase;
 import com.drhowdydoo.animenews.databinding.ActivityMainBinding;
 import com.drhowdydoo.animenews.databinding.FilterDialogBinding;
 import com.drhowdydoo.animenews.model.RssItem;
-import com.drhowdydoo.animenews.service.DBCleanupService;
+import com.drhowdydoo.animenews.util.DBCleanupScheduler;
 import com.drhowdydoo.animenews.util.MyDiffUtilCallback;
 import com.drhowdydoo.animenews.util.RssParser;
 import com.google.android.material.chip.Chip;
@@ -112,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: FirstLaunch");
             binding.feedPlaceholder.setVisibility(View.VISIBLE);
             rssParser.getRssFeed(BASE_URL);
-            initDBCleanupService();
+            new DBCleanupScheduler().schedule(this);
             editor.putBoolean("firstLaunch", false).apply();
         }
 
@@ -185,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
         int finalCurrentPosition = currentPosition;
         recyclerView.post(() -> {
             if (finalCurrentPosition == 0) {
+
                 recyclerView.smoothScrollToPosition(finalCurrentPosition);
             }
         });
@@ -221,10 +218,6 @@ public class MainActivity extends AppCompatActivity {
                 }));
     }
 
-    public RecyclerViewAdapter getAdapter() {
-        return adapter;
-    }
-
     public void stopRefreshing() {
         swipeRefreshLayout.setEnabled(true);
         syncIndicator.setVisibility(View.GONE);
@@ -235,14 +228,5 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void initDBCleanupService() {
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        ComponentName componentName = new ComponentName(this, DBCleanupService.class);
-        JobInfo jobInfo = new JobInfo.Builder(1, componentName)
-                .setPeriodic(24 * 60 * 60 * 1000L) // run once per day
-                .setPersisted(true)
-                .build();
-        jobScheduler.schedule(jobInfo);
-    }
 
 }
