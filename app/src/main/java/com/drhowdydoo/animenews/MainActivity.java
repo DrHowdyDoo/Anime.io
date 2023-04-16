@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -200,6 +201,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.searchInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                imm.hideSoftInputFromWindow(binding.searchInput.getWindowToken(),0);
+                return true;
+            }
+            return false;
+        });
 
     }
 
