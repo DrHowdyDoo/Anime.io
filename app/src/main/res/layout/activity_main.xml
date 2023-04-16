@@ -54,6 +54,7 @@
         <com.google.android.material.textfield.TextInputLayout
             style="@style/SearchBar"
             android:id="@+id/search_bar"
+            android:visibility="gone"
             android:maxWidth="720dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
