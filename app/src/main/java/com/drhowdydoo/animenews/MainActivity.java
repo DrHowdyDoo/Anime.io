@@ -1,13 +1,21 @@
 package com.drhowdydoo.animenews;
 
+import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
@@ -37,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -55,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private CompositeDisposable disposables;
     private FeedDao feedDao;
     private boolean scrollToTop = false;
+    private List<RssItem> storedFeeds = new ArrayList<>();
 
     @SuppressLint("CheckResult")
     @Override
@@ -81,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setAdapter(adapter);
 
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         new DBCleanupScheduler().schedule(this);
 
         SharedPreferences preferences = getSharedPreferences("com.drhowdydoo.preferences", MODE_PRIVATE);
@@ -122,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
             rssParser.getRssFeed(BASE_URL);
         });
 
+        swipeRefreshLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+
+
 
         binding.materialToolbar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.filter) {
@@ -159,11 +174,51 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.settings) {
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
+            } else if (item.getItemId() == R.id.search) {
+                if (binding.searchBar.isShown()) {
+                    binding.searchBar.setVisibility(View.GONE);
+                }else {
+                    binding.searchBar.setVisibility(View.VISIBLE);
+                    binding.searchInput.requestFocus();
+                    imm.showSoftInput(binding.searchInput,InputMethodManager.SHOW_IMPLICIT);
+                }
+                return true;
             } else {
                 return false;
             }
         });
 
+
+        binding.searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                filterFeeds(s.toString());
+            }
+        });
+
+
+    }
+
+    private void filterFeeds(String text) {
+        if (!text.isEmpty()) {
+            List<RssItem> results;
+            results = storedFeeds.stream().filter(item -> item.getTitle().toLowerCase().contains(text.toLowerCase())).collect(Collectors.toList());
+            if (results.isEmpty()) {
+                binding.emptyPlaceholder.setVisibility(View.VISIBLE);
+                binding.txtEmptyTitle.setText("No results found");
+                binding.txtEmptyBody.setVisibility(View.INVISIBLE);
+            } else {
+                binding.emptyPlaceholder.setVisibility(View.GONE);
+            }
+            updateData(results);
+            return;
+        }
+        binding.emptyPlaceholder.setVisibility(View.GONE);
+        updateData(storedFeeds);
     }
 
 
@@ -199,7 +254,8 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
-
+                    storedFeeds.clear();
+                    storedFeeds.addAll(response);
                     binding.emptyPlaceholder.setVisibility(View.GONE);
                     if (binding.feedPlaceholder.isShown() && !response.isEmpty()) {
                         binding.feedPlaceholder.setVisibility(View.GONE);
@@ -217,6 +273,23 @@ public class MainActivity extends AppCompatActivity {
     public void showError(String msg) {
         Snackbar.make(binding.getRoot(), msg, BaseTransientBottomBar.LENGTH_SHORT)
                 .show();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
     }
 
 

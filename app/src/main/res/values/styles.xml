@@ -36,4 +36,10 @@
         <item name="cornerSize">24dp</item>
     </style>
 
+    <style name="SearchBar" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="shapeAppearance">?attr/shapeAppearanceMediumComponent</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Material3.SearchBar</item>
+    </style>
+
+
 </resources>

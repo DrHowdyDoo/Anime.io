@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/root_layout"
-    android:animateLayoutChanges="true"
     tools:context=".MainActivity">
 
 
@@ -14,6 +13,7 @@
     android:id="@+id/appbar_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -24,6 +24,7 @@
         app:expandedTitleTextAppearance="@style/ExpandedTitleTextAppearance"
         app:expandedTitleMarginBottom="30dp"
         android:layout_height="?attr/collapsingToolbarLayoutLargeSize">
+
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/material_toolbar"
@@ -50,7 +51,29 @@
 
     </com.google.android.material.appbar.CollapsingToolbarLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/SearchBar"
+            android:id="@+id/search_bar"
+            android:maxWidth="720dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:endIconMode="clear_text"
+            app:startIconDrawable="@drawable/round_search_24"
+            android:hint="@string/search">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/search_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
 </com.google.android.material.appbar.AppBarLayout>
+
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/sync_indicator"
@@ -68,6 +91,7 @@
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -108,8 +132,8 @@
     <LinearLayout
         android:id="@+id/empty_placeholder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
+        android:layout_height="match_parent"
+        android:visibility="gone"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical">
