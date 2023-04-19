@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".SettingsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
 
     <TextView
@@ -41,6 +45,7 @@
         android:textAppearance="@style/SettingsTitleTextAppearance"
         android:text="@string/sync_once_on_start"
         />
+
 
     <TextView
         android:id="@+id/txt_database_header"
@@ -88,6 +93,40 @@
 
     </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/cleanup_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:foreground="@drawable/ripple_bg"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_title_cleanup_time"
+                android:paddingBottom="2dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/SettingsTitleTextAppearance"
+                android:text="Storage cleanup"/>
+
+            <TextView
+                android:id="@+id/txt_subtitle_cleanup_time"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textAppearance="?textAppearanceTitleSmall"
+                android:text="Once a day"
+                android:alpha="0.8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -128,5 +167,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    </LinearLayout>
 
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

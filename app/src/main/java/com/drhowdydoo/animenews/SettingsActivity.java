@@ -10,6 +10,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.drhowdydoo.animenews.databinding.ActivitySettingsBinding;
+import com.drhowdydoo.animenews.util.DBCleanupScheduler;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -58,6 +59,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         binding.txtSubtitleArticleLimit.setText(checkedLimit + " feeds");
 
+        int savedCleanupTimePeriod = preferences.getInt("com.drhowdydoo.settings.cleanupTime",0);
+        String checkedCleanupTimePeriod = savedCleanupTimePeriod == 0 ? "Once a day" : savedCleanupTimePeriod == 1 ? "Once every three days" : "Once a week";
+        binding.txtSubtitleCleanupTime.setText(checkedCleanupTimePeriod);
+
+
         CharSequence[] articleLimits = {"40", "50", "60"};
         binding.articleLimit.setOnClickListener(v -> {
             int checkedLimitId = preferences.getInt(getString(R.string.settings_article_limit), 0);
@@ -67,6 +73,22 @@ public class SettingsActivity extends AppCompatActivity {
                         editor.putInt(getString(R.string.settings_article_limit), which).apply();
                         int item = which == 0 ? 40 : which == 1 ? 50 : 60;
                         binding.txtSubtitleArticleLimit.setText(item + " feeds");
+                        dialog.dismiss();
+                    })
+                    .show();
+        });
+
+        CharSequence[] cleanupTime = {"Once a day", "Once every three days", "Once a week"};
+        binding.cleanupTime.setOnClickListener(v -> {
+            int checkedTimeId = preferences.getInt("com.drhowdydoo.settings.cleanupTime", 0);
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Cleanup Period")
+                    .setSingleChoiceItems(cleanupTime, checkedTimeId, (dialog, which) -> {
+                        editor.putInt("com.drhowdydoo.settings.cleanupTime", which).apply();
+                        String item = which == 0 ? "Once a day" : which == 1 ? "Once every three days" : "Once a week";
+                        binding.txtSubtitleCleanupTime.setText(item);
+                        long timePeriod = which == 0 ? (24 * 60 * 60 * 1000L) : which == 1 ? (24 * 60 * 60 * 1000L * 3) : (24 * 60 * 60 * 1000L * 7);
+                        new DBCleanupScheduler().reschedule(this,timePeriod);
                         dialog.dismiss();
                     })
                     .show();
