@@ -164,4 +164,15 @@
     </LinearLayout>
 
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/scroll_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        style="?attr/floatingActionButtonSmallStyle"
+        android:layout_margin="24dp"
+        app:srcCompat="@drawable/double_arrow_up"
+        android:layout_gravity="bottom|end"/>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

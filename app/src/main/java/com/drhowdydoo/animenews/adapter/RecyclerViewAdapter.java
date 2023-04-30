@@ -69,6 +69,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     .into(holder.thumbnail);
         } else {
             Glide.with(context).clear(holder.thumbnail);
+            Glide.with(context).load(R.drawable.img_placeholder).into(holder.thumbnail);
         }
 
         holder.itemView.setOnClickListener(v -> {

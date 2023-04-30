@@ -18,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -209,6 +210,22 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
+        binding.scrollBack.setOnClickListener(v -> {
+            recyclerView.smoothScrollToPosition(0);
+        });
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    binding.scrollBack.show();
+                }
+                else if (dy < 0) {
+                    binding.scrollBack.hide();
+                }
+            }
+        });
+
     }
 
     private void filterFeeds(String text) {
@@ -247,7 +264,8 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
-
+                    storedFeeds.clear();
+                    storedFeeds.addAll(response);
                     if (response.isEmpty()) {
                         binding.emptyPlaceholder.setVisibility(View.VISIBLE);
                     } else binding.emptyPlaceholder.setVisibility(View.GONE);
