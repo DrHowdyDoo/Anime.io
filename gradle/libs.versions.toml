@@ -40,6 +40,8 @@ rxandroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version = "3.0
 rxjava = { group = "io.reactivex.rxjava3", name = "rxjava", version = "3.1.6" }
 rxbinding-swiperefreshlayout = { group = "com.jakewharton.rxbinding4", name = "rxbinding-swiperefreshlayout", version = "4.0.0" }
 androidx-webkit = { group = "androidx.webkit", name = "webkit", version = "1.7.0-beta01" }
+androidx-activity = { group = "androidx.activity", name = "activity", version = "1.7.1" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version = "1.0.1" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }

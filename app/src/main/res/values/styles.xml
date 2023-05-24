@@ -41,5 +41,9 @@
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Material3.SearchBar</item>
     </style>
 
+    <style name="Theme.App.Splash" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.AnimeNews</item>
+    </style>
 
 </resources>

@@ -20,6 +20,7 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -71,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DynamicColors.applyToActivityIfAvailable(this);
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
+        DynamicColors.applyToActivityIfAvailable(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -164,7 +166,14 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 getFilteredFeeds(filters);
                             }
-                        }).show();
+                        })
+                        .setNegativeButton("Reset",((dialog, which) -> {
+                            editor.putStringSet("com.drhowdydoo.filters",null ).apply();
+                            editor.putStringSet("com.drhowdydoo.checkedFilters", null).apply();
+                            scrollToTop = true;
+                            getFeeds();
+                        }))
+                        .show();
                 Set<String> checkedFilterChips = preferences.getStringSet("com.drhowdydoo.checkedFilters", null);
                 if (checkedFilterChips != null) {
                     checkedFilterChips.forEach(id -> {

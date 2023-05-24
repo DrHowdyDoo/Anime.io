@@ -26,8 +26,8 @@ public class WebPage extends AppCompatActivity {
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DynamicColors.applyToActivityIfAvailable(this);
         super.onCreate(savedInstanceState);
+        DynamicColors.applyToActivityIfAvailable(this);
         ActivityWebPageBinding binding = ActivityWebPageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

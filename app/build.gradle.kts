@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.rxbinding.swiperefreshlayout)
     implementation(libs.androidx.webkit)
+    implementation(libs.androidx.core.splashscreen)
     annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.androidx.room.rxjava3)
 
