@@ -8,4 +8,5 @@
     <string name="settings_article_limit">com.drhowdydoo.settings.articleLimit</string>
     <string name="news_source">By Anime News Network</string>
     <string name="search">Search</string>
+    <string name="ui">UI</string>
 </resources>

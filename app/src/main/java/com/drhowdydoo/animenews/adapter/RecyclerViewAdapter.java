@@ -33,10 +33,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private final Context context;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy h:mm a");
+    private int cornerRadius;
 
-    public RecyclerViewAdapter(List<RssItem> feeds, Context context) {
+    public RecyclerViewAdapter(List<RssItem> feeds, Context context, int cornerRadius) {
         this.feeds = feeds;
         this.context = context;
+        this.cornerRadius = cornerRadius;
     }
 
     @NonNull
@@ -61,10 +63,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     .load(rssItem.getImageUrl())
                     .fitCenter()
                     .format(DecodeFormat.PREFER_RGB_565)
-                    .transform(new RoundedCorners(50))
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .priority(Priority.HIGH)
                     .placeholder(R.drawable.img_placeholder)
+                    .transform(new RoundedCorners(cornerRadius))
                     .error(R.drawable.round_broken_image_24)
                     .into(holder.thumbnail);
         } else {

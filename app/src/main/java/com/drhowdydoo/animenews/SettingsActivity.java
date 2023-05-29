@@ -93,5 +93,12 @@ public class SettingsActivity extends AppCompatActivity {
                     })
                     .show();
         });
+
+        binding.cornerRadiusSlider.addOnChangeListener((slider, value, fromUser) -> {
+            editor.putInt("com.drhowdydoo.settings.cornerRadius", (int) value).apply();
+        });
+
+        int cornerRadius = preferences.getInt("com.drhowdydoo.settings.cornerRadius",50);
+        binding.cornerRadiusSlider.setValues((float) cornerRadius);
     }
 }

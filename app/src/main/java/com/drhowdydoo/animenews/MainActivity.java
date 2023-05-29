@@ -88,9 +88,13 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setProgressBackgroundColorSchemeColor(progressBackgroundColor);
         swipeRefreshLayout.setColorSchemeColors(progressIndicatorColor);
 
+        SharedPreferences preferences = getSharedPreferences("com.drhowdydoo.preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        int cornerRadius = preferences.getInt("com.drhowdydoo.settings.cornerRadius",50);
 
         feeds = new ArrayList<>();
-        adapter = new RecyclerViewAdapter(feeds, MainActivity.this);
+        adapter = new RecyclerViewAdapter(feeds, MainActivity.this,cornerRadius);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setAdapter(adapter);
@@ -99,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         new DBCleanupScheduler().schedule(this);
 
-        SharedPreferences preferences = getSharedPreferences("com.drhowdydoo.preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
 
         FeedDatabase db = Room.databaseBuilder(getApplicationContext(), FeedDatabase.class, "drhowdydoo-feedDb").build();
         feedDao = db.feedDao();
