@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -22,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
@@ -68,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
     private FeedDao feedDao;
     private boolean scrollToTop = false;
     private List<RssItem> storedFeeds = new ArrayList<>();
+    private int currentSpanCount = 2; // Initial grid size
+    private ScaleGestureDetector scaleGestureDetector;
+    private GridLayoutManager gridLayoutManager;
 
     @SuppressLint("CheckResult")
     @Override
@@ -96,8 +102,17 @@ public class MainActivity extends AppCompatActivity {
         feeds = new ArrayList<>();
         adapter = new RecyclerViewAdapter(feeds, MainActivity.this,cornerRadius);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        } else {
+            gridLayoutManager = new GridLayoutManager(MainActivity.this,currentSpanCount);
+            recyclerView.setLayoutManager(gridLayoutManager);
+        }
+
         recyclerView.setAdapter(adapter);
+
+        scaleGestureDetector = new ScaleGestureDetector(this, new MyScaleGestureListener());
 
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -314,6 +329,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            scaleGestureDetector.onTouchEvent(event);
+        }
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
             if (v instanceof EditText) {
@@ -329,5 +348,26 @@ public class MainActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
 
+
+    private class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            // Get the scale factor from the detector
+            float scaleFactor = detector.getScaleFactor();
+            if (scaleFactor > 1.0f) {
+                // Zooming in
+                currentSpanCount = 2;
+            } else if (scaleFactor < 1.0f && currentSpanCount > 1) {
+                // Zooming out
+                currentSpanCount = 3;
+            }
+            // Update the GridLayoutManager's span count
+            gridLayoutManager.setSpanCount(currentSpanCount);
+            recyclerView.setLayoutManager(gridLayoutManager);
+            adapter.notifyDataSetChanged();
+
+            return true;
+        }
+    }
 
 }

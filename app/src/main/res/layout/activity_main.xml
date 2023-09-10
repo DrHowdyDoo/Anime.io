@@ -8,7 +8,6 @@
     android:id="@+id/root_layout"
     tools:context=".MainActivity">
 
-
     <com.google.android.material.appbar.AppBarLayout
     android:id="@+id/appbar_layout"
     android:layout_width="match_parent"
