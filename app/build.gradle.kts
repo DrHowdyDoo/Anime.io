@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace = "com.drhowdydoo.animenews"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.drhowdydoo.animenews"
         minSdk = 27
         targetSdk = 33
-        versionCode = 8
-        versionName = "1.0.6"
+        versionCode = 9
+        versionName = "1.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
